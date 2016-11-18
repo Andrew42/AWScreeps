@@ -2,13 +2,13 @@ var roleBuilder = {
 
     /** @param {Creep} creep **/
     run: function(creep,source) {
-        if(creep.memory.upgrading && creep.carry.energy == 0) {
-            creep.memory.upgrading = false;
+        if(creep.memory.building && creep.carry.energy == 0) {
+            creep.memory.building = false;
             creep.say('harvesting');
         }
-        if(!creep.memory.upgrading && creep.carry.energy == creep.carryCapacity) {
-            creep.memory.upgrading = true;
-            creep.say('upgrading');
+        if(!creep.memory.building && creep.carry.energy == creep.carryCapacity) {
+            creep.memory.building = true;
+            creep.say('building');
         }
 
         if(creep.memory.building) {
