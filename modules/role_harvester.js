@@ -17,6 +17,16 @@ var roleHarvester = {
                     }
             });
             if(targets.length > 0) {
+                var best_target = targets[0];
+                for(var tar in targets) {
+                    if(tar.structureType == STRUCTURE_EXTENSION) {
+                        best_target = tar
+                    } else if(tar.structureType == STRUCTURE_TOWER && best_target.structureType != STRUCTURE_EXTENSION) {
+                        best_target = tar
+                    } else if(tar.structureType == STRUCTURE_SPAWN && !(best_target.structureType == STRUCTURE_EXTENSION || best_target.structureType == STRUCTURE_TOWER)) {
+                        best_target = tar
+                    }
+                }
                 if(creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(targets[0]);
                 }
