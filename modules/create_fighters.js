@@ -1,13 +1,13 @@
 var createFighters = {
     /** @param {Creep} creep **/
-    run: function(spawn) {
-        var min_defenders = 0
-        var min_scouts = 0
+    run: function(spawn,defenders,scouts,max_creeps) {
+        var min_defenders = defenders
+        var min_scouts = scouts
 
-        var max_defenders = 0
-        var max_scouts = 0
+        var max_defenders = defenders
+        var max_scouts = scouts
 
-        var max_total_creeps = 0
+        var max_total_creeps = max_creeps
 
         var fighter_template = [ATTACK,ATTACK,MOVE,MOVE,MOVE]
         var scout_template = [ATTACK,MOVE,MOVE,MOVE,MOVE]
@@ -18,13 +18,15 @@ var createFighters = {
         var curr_total_creeps = defenders.length + scouts.length
         var curr_room_name = spawn.room.name
 
-        console.log('Total Fighter Creeps: ' + curr_total_creeps);
+        console.log('Total Fighter Creeps: ' + curr_total_creeps + '/' + max_total_creeps);
 
 
-        if(defenders.length < min_harvesters && spawn.energy >= 300 && curr_total_creeps < max_total_creeps) {
+        if(defenders.length < min_defenders && spawn.energy >= 300 && curr_total_creeps < max_total_creeps) {
             var newName = spawn.createCreep(fighter_template, undefined, {role: 'defender','home': curr_room_name});
             console.log('Spawning new defender: ' + newName);
-        } else if(scouts.length)
+        } else if(scouts.length) {
+
+        }
     }
 
 };
