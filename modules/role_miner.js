@@ -12,8 +12,8 @@ var roleMiner = {
         }
 
         if (creep.memory.mining) {
-            if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(source);
+            if(creep.harvest(creep.memory.assigned_source) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(creep.memory.assigned_source);
             }
         } else {
             var closestContainer = creep.pos.findClosestByPath(FIND_STRUCTURES, {

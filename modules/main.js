@@ -7,7 +7,12 @@ var roleDefender = require('role_defender');
 var roleScout = require('role_scout');
 var createWorkers = require('create_workers');
 var createFighters = require('create_fighters');
+var structTower = require('struct_tower');
 var changeHome = require('change_home');
+var changeRole = require('change_role');
+var assignMiners = require('assign_miners');
+
+var roleRepairer = require('role_repairer');
 
 module.exports.loop = function () {
 
@@ -18,69 +23,66 @@ module.exports.loop = function () {
         }
     }
 
-    var harvs = 7;
-    var builders = 1;
-    var upgrades = 1;
+    //console.log('TEST1: ' + roleRepairer.add(3,4));
+    //console.log('TEST2: ' + roleRepairer.sub(3,4));
+
+    var avail_rooms = Game.rooms;
+    assignMiners.run(avail_rooms);
+
+    var const_sites = Game.constructionSites;
+    for (i in const_sites) {
+        site = const_sites[i];
+        //console.log('Site: ',site.id);
+    }
+    //console.log('Num. Sites: ',const_sites.length);
+
+    var harvs = 3;
+    var builders = 0;
+    var upgraders = 4;
     var janitors = 0;
     var miners = 2;
-    var max_workers = 11;
+    var max_workers = 9;
 
     var attackers = 0;
-    var scouts = 0;
-    var max_fighters = 0;
+    var scouts = 1;
+    var max_fighters = 1;
 
     var spawn = Game.spawns['Spawn1'];
 
-    createWorkers.run(spawn,harvs,builders,upgrades,janitors,miners,max_workers);
+    createWorkers.run(spawn,harvs,builders,upgraders,janitors,miners,max_workers);
     createFighters.run(spawn,attackers,scouts,max_fighters);
 
     var towers = spawn.room.find(FIND_MY_STRUCTURES, {filter: { structureType: STRUCTURE_TOWER}})
 
-    for (var t_obj in towers) {
-        towerHeal.run(t_obj);
-        towerAttack.run(t_obj);
+    for (var i in towers) {
+        var t_obj = towers[i];
+        structTower.heal(t_obj);
+        structTower.attack(t_obj);
     }
 
-    //var tower = Game.getObjectById('ef358cdcd659a8dcaf66f81c');
-    //if(tower) {
-    //    var closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
-    //        filter: (structure) => structure.hits < structure.hitsMax
-    //    });
-    //    if(closestDamagedStructure) {
-    //        tower.repair(closestDamagedStructure);
-    //    }
-    //    var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
-    //    if(closestHostile) {
-    //        tower.attack(closestHostile);
-    //    }
-    //}
+    var scout_room = 'E62N34';
 
     var room_sources = Game.spawns['Spawn1'].room.find(FIND_SOURCES);
     var counter = 1;
-    for(var name in Game.creeps) {
+    for (var name in Game.creeps) {
         var creep = Game.creeps[name];
         var source = room_sources[counter % room_sources.length];
         if (creep.memory.role == 'miner') {
             roleMiner.run(creep,source);
             counter += 1;
-        }
-        if(creep.memory.role == 'harvester') {
-            //roleHarvester.run(creep);
-            roleHarvester.run(creep,source);
-            counter += 1;
-        }
-        if(creep.memory.role == 'upgrader') {
-            //roleUpgrader.run(creep);
-            roleUpgrader.run(creep,source);
-            counter += 1;
-        }
-        if(creep.memory.role == 'builder') {
-            //roleBuilder.run(creep);
-            roleBuilder.run(creep,source);
-            counter += 1;
-        }
-        if(creep.memory.role == 'janitor') {
+            continue;
+        } else if (creep.memory.role == 'harvester') {
+            roleHarvester.run(creep);
+        } else if (creep.memory.role == 'upgrader') {
+            roleUpgrader.run(creep);
+        } else if (creep.memory.role == 'builder') {
+            roleBuilder.run(creep);
+        } else if (creep.memory.role == 'janitor') {
             roleJanitor.run(creep);
+        }
+
+        if (creep.memory.role == 'scout' && scout_room != undefined) {
+            roleScout.moveToRoom(creep,scout_room);
         }
     }
 }

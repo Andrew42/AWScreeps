@@ -16,13 +16,14 @@ var roleJanitor = {
         }
 
         if(!creep.memory.cleaning) {
-            var repair_tars = creep.room.find(FIND_MY_STRUCTURES, {
+            var repair_tars = creep.room.find(FIND_STRUCTURES, {
                 filter: (structure) => structure.hits < structure.hitsMax*0.5
             });
             var build_tars = creep.room.find(FIND_CONSTRUCTION_SITES);
 
             if (repair_tars.length > 0) {
-                creep.repairing = true;
+                creep.say('repairing');
+                creep.memory.repairing = true;
                 creep.memory.building = false;
                 creep.memory.upgrading = false;
             } else if (build_tars.length > 0) {
@@ -63,16 +64,19 @@ var roleJanitor = {
                     fullestContainer = tar;
                 }
             }
-            var dropped_resources = creep.room.find(FIND_DROPPED_RESOURCES);
-            if (dropped_resources.length > 0) {
-                if(creep.pickup(dropped_resources[0]) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(dropped_resources[0])
-                }
-            } else {
-                if (creep.withdraw(fullestContainer, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(fullestContainer);
-                }
+            if (creep.withdraw(fullestContainer, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(fullestContainer);
             }
+            //var dropped_resources = creep.room.find(FIND_DROPPED_RESOURCES);
+            //if (dropped_resources.length > 0) {
+            //    if(creep.pickup(dropped_resources[0]) == ERR_NOT_IN_RANGE) {
+            //        creep.moveTo(dropped_resources[0])
+            //    }
+            //} else {
+            //    if (creep.withdraw(fullestContainer, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+            //        creep.moveTo(fullestContainer);
+            //    }
+            //}
         }
     }
 };
