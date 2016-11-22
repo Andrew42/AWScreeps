@@ -4,11 +4,14 @@ var roleUpgrader = require('role_upgrader');
 var roleBuilder = require('role_builder');
 var roleJanitor = require('role_janitor');
 var roleScout = require('role_scout');
+var roleTransporter = require('role_transporter');
+var roleClaimer = require('role_claimer');
 var createWorkers = require('create_workers');
 var createFighters = require('create_fighters');
 var structTower = require('struct_tower');
 var assignMiners = require('assign_miners');
 var assignJanitors = require('assign_janitors');
+var assignTransporters = require('assign_transporters');
 var getStructures = require('get_structures');
 
 module.exports.loop = function () {
@@ -31,22 +34,25 @@ module.exports.loop = function () {
     //var miners = 2;
     //var max_workers = 10;
 
-    var harvs = 3;
-    var builders = 2;
-    var upgraders = 2;
+    var harvs = 2;
+    var builders = 1;
+    var upgraders = 4;
     var janitors = 0;
-    var miners = 2;
-    var max_workers = 9;
+    var miners = 3;
+    var transporters = 6;
+    var max_workers = 16;
 
     var attackers = 0;
-    var scouts = 0;
-    var max_fighters = 0;
+    var scouts = 1;
+    var claimers = 0;
+    var max_fighters = 1;
 
     assignMiners.run(avail_rooms);
-    //assignJanitors.run(avail_rooms);
+    assignJanitors.run(avail_rooms);
+    assignTransporters.run(avail_rooms);
 
-    createWorkers.run(spawn,harvs,builders,upgraders,janitors,miners,max_workers);
-    createFighters.run(spawn,attackers,scouts,max_fighters);
+    createWorkers.run(spawn,harvs,builders,upgraders,janitors,miners,transporters,max_workers);
+    createFighters.run(spawn,attackers,scouts,claimers,max_fighters);
 
     //var storages = getStructures.run([spawn.room],STRUCTURE_STORAGE);
     //var containers = getStructures.run([spawn.room],STRUCTURE_CONTAINER);
@@ -56,13 +62,15 @@ module.exports.loop = function () {
     //}
     for (var i in towers) {
         var t_obj = Game.getObjectById(towers[i]);
-        structTower.attack(t_obj);
-        structTower.heal(t_obj);
+        structTower.run(t_obj);
+        //structTower.attack(t_obj);
+        //structTower.heal(t_obj);
     }
 
-    //var scout_room = 'E62N34';
+    //var scout_room = 'E63N34';  // HOME!
+    var scout_room = 'E62N34';
     //var scout_room = 'E61N34';
-    var scout_room = 'E63N33';
+    //var scout_room = 'E63N33';
 
     for (var name in Game.creeps) {
         var creep = Game.creeps[name];
@@ -82,10 +90,14 @@ module.exports.loop = function () {
             roleBuilder.run(creep,avail_rooms);
         } else if (creep.memory.role == 'janitor') {
             roleJanitor.run(creep);
+        } else if (creep.memory.role == 'transporter') {
+            roleTransporter.run(creep,avail_rooms);
         }
 
         if (creep.memory.role == 'scout' && scout_room != undefined) {
             roleScout.moveToRoom(creep,scout_room);
+        } else if (creep.memory.role == 'claimer') {
+            roleClaimer.run(creep,claim_room)
         }
     }
 }

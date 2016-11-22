@@ -10,9 +10,7 @@ var assignMiners = {
             var sources = room.find(FIND_SOURCES);
             for (var j in sources) {
                 var source = sources[j];
-                if (source.id == '57ef9e6e86f108ae6e60f4b4') {
-                    continue;
-                } else if (source.id == '57ef9e5a86f108ae6e60f2e7') {
+                if (source.id == '57ef9e5a86f108ae6e60f2e7') {
                     continue;
                 } else if (source.id == '57ef9e8386f108ae6e60f67c') {
                     continue;

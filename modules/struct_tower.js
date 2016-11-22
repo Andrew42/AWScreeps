@@ -1,6 +1,11 @@
 var structTower = {
 
     /** @param {Creep} creep **/
+    run: function(tower) {
+        this.attack(tower);
+        this.heal(tower);
+    },
+
     attack: function(tower) {
         var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
         if(closestHostile) {
@@ -9,8 +14,8 @@ var structTower = {
     },
     
     heal: function(tower) {
-        var wall_cut = 15000;
-        var rampart_cut = 25000;
+        var wall_cut = 30000;
+        var rampart_cut = 30000;
         var damagedStructures = tower.room.find(FIND_STRUCTURES, {
             filter: (structure) => structure.hits < structure.hitsMax
         });

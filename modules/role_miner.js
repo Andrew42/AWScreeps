@@ -7,7 +7,7 @@ var roleMiner = {
             creep.say('mining');
         }
         //if (creep.memory.mining && creep.carry.energy == creep.carryCapacity) {
-        if (creep.memory.mining && creep.carry.energy > 45) {
+        if (creep.memory.mining && creep.carry.energy > 95) {
             creep.memory.mining = false;
             creep.say('storing');
         }
