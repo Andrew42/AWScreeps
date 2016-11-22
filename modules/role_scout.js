@@ -5,7 +5,7 @@ var roleScout = {
     },
 
     moveToRoom: function(creep,room_name) {
-        creep.moveTo(new RoomPosition(25, 25, room_name));
+        creep.moveTo(new RoomPosition(27, 35, room_name));
         creep.say(room_name);
     }
 };

@@ -1,55 +1,37 @@
 var roleJanitor = {
 
     /** @param {Creep} creep **/
-    run: function(creep,source) {
+    run: function(creep) {
+        if (creep.room.name != creep.memory.home) {
+            //creep.say('going home');
+            creep.moveTo(new RoomPosition(25, 25, creep.memory.home));
+            return;
+        }
+
         if(!creep.memory.cleaning && creep.carry.energy == 0) {
             creep.memory.cleaning = true;
             creep.memory.repairing = false;
-            creep.memory.building = false;
-            creep.memory.upgrading = false;
             creep.say('cleaning');
         } else if(creep.carry.energy == creep.carryCapacity) {
             creep.memory.cleaning = false;
             creep.memory.repairing = false;
-            creep.memory.building = false;
-            creep.memory.upgrading = false;
         }
 
         if(!creep.memory.cleaning) {
             var repair_tars = creep.room.find(FIND_STRUCTURES, {
                 filter: (structure) => structure.hits < structure.hitsMax*0.5
             });
-            var build_tars = creep.room.find(FIND_CONSTRUCTION_SITES);
-
             if (repair_tars.length > 0) {
                 creep.say('repairing');
                 creep.memory.repairing = true;
-                creep.memory.building = false;
-                creep.memory.upgrading = false;
-            } else if (build_tars.length > 0) {
-                creep.memory.repairing = false;
-                creep.memory.building = true;
-                creep.memory.upgrading = false;
             } else {
                 creep.memory.repairing = false;
-                creep.memory.building = false;
-                creep.memory.upgrading = true;
             }
         }
 
-
         if (creep.memory.repairing && creep.carry.energy > 0) {
             if (creep.repair(repair_tars[0]) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(repair_tars[0])
-            }
-        } else if (creep.memory.building && creep.carry.energy > 0) {
-            //var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
-            if(creep.build(build_tars[0]) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(build_tars[0]);
-            }
-        } else if (creep.memory.upgrading && creep.carry.energy > 0) {
-            if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(creep.room.controller);
+                creep.moveTo(repair_tars[0]);
             }
         } else {
             var roomContainers = creep.room.find(FIND_STRUCTURES, {
