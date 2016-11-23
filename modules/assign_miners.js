@@ -2,6 +2,13 @@ var assignMiners = {
 
     /** @param {Creep} creep **/
     run: function(avail_rooms) {
+        var active_miners = _.filter(Game.creeps, (creep) => (creep.memory.role == 'miner' && creep.memory.assigned_source != undefined));
+        var inactive_miners = _.filter(Game.creeps, (creep) => (creep.memory.role == 'miner' && creep.memory.assigned_source == undefined));
+
+        if (inactive_miners.length == 0) {
+            return;
+        }
+
         var avail_sources = [];
         var assigned_sources = [];
 
@@ -12,16 +19,14 @@ var assignMiners = {
                 var source = sources[j];
                 if (source.id == '57ef9e5a86f108ae6e60f2e7') {
                     continue;
-                } else if (source.id == '57ef9e8386f108ae6e60f67c') {
-                    continue;
+                //} else if (source.id == '57ef9e8386f108ae6e60f67c') {
+                //    continue;
                 }
                 avail_sources.push(source.id);
             }
         }
 
-        var active_miners = _.filter(Game.creeps, (creep) => (creep.memory.role == 'miner' && creep.memory.assigned_source != undefined));
-        var inactive_miners = _.filter(Game.creeps, (creep) => (creep.memory.role == 'miner' && creep.memory.assigned_source == undefined));
-        
+
         for (var i in active_miners) {
             var creep = active_miners[i];
             var source_id = creep.memory.assigned_source;

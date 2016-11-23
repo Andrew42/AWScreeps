@@ -1,14 +1,14 @@
 //var getStructures = require('get_structures');
 
-var assignJanitors = {
+var assignClaimers = {
 
     /** @param {Creep} creep **/
     run: function(avail_rooms) {
         //var avail_sources = [];
         //var assigned_sources = [];
 
-        var active_creeps = _.filter(Game.creeps, (creep) => (creep.memory.role == 'janitor' && creep.memory.assigned_room != undefined));
-        var inactive_creeps = _.filter(Game.creeps, (creep) => (creep.memory.role == 'janitor' && creep.memory.assigned_room == undefined));
+        var active_creeps = _.filter(Game.creeps, (creep) => (creep.memory.role == 'claimer' && creep.memory.assigned_room != undefined));
+        var inactive_creeps = _.filter(Game.creeps, (creep) => (creep.memory.role == 'claimer' && creep.memory.assigned_room == undefined));
 
         if (inactive_creeps.length == 0) {
             return;
@@ -35,8 +35,8 @@ var assignJanitors = {
             //console.log('Room: ',avail_rooms[i].name);
             //console.log('Towers: ',towers.length);
 
-            // If there are 2 towers present don't create a janitor
-            if (towers.length > 1) {
+            // TODO: Change this to a check for a controlled controller
+            if (avail_rooms[i].controller.level > 0) {
                 //obj_map[obj_id] = 0;
                 continue;
             //} else if (obj_id == 'E63N33') {
@@ -48,8 +48,8 @@ var assignJanitors = {
             avail_objs.push(obj_id);
         }
 
-        //console.log('obj_map: ',obj_map);
-        //console.log('avail_objs_1',avail_objs);
+        console.log('obj_map: ',obj_map);
+        console.log('avail_objs_1',avail_objs);
 
         for (var i in active_creeps) {
             var creep = active_creeps[i];
@@ -68,7 +68,7 @@ var assignJanitors = {
             }
         }
 
-        //console.log('avail_objs_2',avail_objs);
+        console.log('avail_objs_2',avail_objs);
 
         return avail_objs
     },
@@ -87,4 +87,4 @@ var assignJanitors = {
     }
 };
 
-module.exports = assignJanitors;
+module.exports = assignClaimers;

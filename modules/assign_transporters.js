@@ -7,6 +7,10 @@ var assignTransporters = {
         var active_creeps = _.filter(Game.creeps, (creep) => (creep.memory.role == 'transporter' && creep.memory.assigned_container != undefined));
         var inactive_creeps = _.filter(Game.creeps, (creep) => (creep.memory.role == 'transporter' && creep.memory.assigned_container == undefined));
 
+        if (inactive_creeps.length == 0) {
+            return;
+        }
+
         var max_assigned = 2;
         var avail_objs = this.getAvailableObjects(active_creeps,avail_rooms,max_assigned);
         this.assignObjects(inactive_creeps,avail_objs);
@@ -18,7 +22,11 @@ var assignTransporters = {
         var obj_map = {};
         for (var i in avail_objs) {
             var obj_id = avail_objs[i];
-            obj_map[obj_id] = max_assigned;
+            if (Game.getObjectById(obj_id).room.storage != undefined) {
+                obj_map[obj_id] = 1;
+            } else {
+                obj_map[obj_id] = max_assigned;
+            }
         }
 
         for (var i in active_creeps) {

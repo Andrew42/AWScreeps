@@ -12,6 +12,7 @@ var roleBuilder = {
         }
 
         if(creep.memory.building) {
+            //creep.say('building');
             var const_sites = Game.constructionSites;
             var target = undefined;
             for (i in const_sites) {
@@ -25,7 +26,19 @@ var roleBuilder = {
                 creep.moveTo(target)
             }
         } else {
-            if (creep.room.name != creep.memory.home) {
+            var dropped_resources = creep.room.find(FIND_DROPPED_RESOURCES, {
+                filter: (res) => {
+                    return res.amount > 50;
+                }
+            });
+
+            if (dropped_resources.length > 0) {
+                if (dropped_resources.length > 0) {
+                    if(creep.pickup(dropped_resources[0]) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(dropped_resources[0])
+                    }
+                }
+            } else if (creep.room.name != creep.memory.home) {
                 //creep.say('going home');
                 creep.moveTo(new RoomPosition(25, 25, creep.memory.home));
                 return;
