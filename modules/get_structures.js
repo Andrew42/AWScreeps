@@ -16,6 +16,7 @@ var getStructures = {
                 }
             }
         }
+        //console.log('Structs:',structs);
         return structs;
     }
 };

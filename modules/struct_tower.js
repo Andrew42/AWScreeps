@@ -15,7 +15,7 @@ var structTower = {
     
     heal: function(tower) {
         var wall_cut = 30000;
-        var rampart_cut = 30000;
+        var rampart_cut = 100000;
         var damagedStructures = tower.room.find(FIND_STRUCTURES, {
             filter: (structure) => structure.hits < structure.hitsMax
         });

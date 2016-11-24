@@ -14,7 +14,7 @@ var roleAttacker = {
             } else {
                 //this.attackStructure(creep,STRUCTURE_WALL);
                 //5830c6a7c887b6b9030cd72c
-                this.attackObject(creep,'5830c6a7c887b6b9030cd72c')
+                this.attackObject(creep,'5830c9668147cbe70dbf9a72')
             }
         }
     },

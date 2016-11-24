@@ -23,6 +23,7 @@ var roleClaimer = {
 
     reserveControl: function(creep) {
         if (creep.reserveController(creep.room.controller) == ERR_NOT_IN_RANGE) {
+            //console.log('Claimer: Moving to controller');
             creep.moveTo(creep.room.controller);
         }
     }

@@ -19,16 +19,15 @@ var roleTemplate = {
     },
 
     getCargo: function(creep) {
-        var assigned_container = Game.getObjectById(creep.memory.assigned_container);
-        if (creep.withdraw(assigned_container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE && assigned_container.store[RESOURCE_ENERGY] > creep.carryCapacity*0.25) {
-            creep.moveTo(assigned_container);
-        } else {
-            creep.moveTo(Game.getObjectById(creep.memory.assigned_storage));
+        //var assigned_container = Game.getObjectById(creep.memory.assigned_container);
+        var assigned_link = Game.getObjectById(creep.room.memory.storage_link_id);
+        if (creep.withdraw(assigned_link, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE && assigned_link.energy > 0) {
+            creep.moveTo(assigned_link);
         }
     },
 
     storeCargo: function(creep) {
-        var assigned_storage = Game.getObjectById(creep.memory.assigned_storage);
+        var assigned_storage = creep.room.storage;
         if (creep.transfer(assigned_storage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
             creep.moveTo(assigned_storage);
         }

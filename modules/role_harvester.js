@@ -48,32 +48,37 @@ var roleHarvester = {
         var targets = creep.room.find(FIND_STRUCTURES, {
                 filter: (structure) => {
                     return (structure.structureType == STRUCTURE_EXTENSION && structure.energy < structure.energyCapacity) ||
-                            (structure.structureType == STRUCTURE_SPAWN && structure.energy < structure.energyCapacity) ||
-                            (structure.structureType == STRUCTURE_STORAGE && structure.store[RESOURCE_ENERGY] < structure.storeCapacity) ||
-                            (structure.structureType == STRUCTURE_TOWER && structure.energy < structure.energyCapacity*0.60);
+                            (structure.structureType == STRUCTURE_SPAWN && structure.energy < structure.energyCapacity);
                 }
         });
-        if(targets.length > 0) {
-            var best_target = targets[0];
-            for(var i in targets) {
-                var tar = targets[i];
-                if(tar.structureType == STRUCTURE_SPAWN) {
-                    best_target = tar;
-                } else if(tar.structureType == STRUCTURE_EXTENSION && best_target.structureType != STRUCTURE_SPAWN) {
-                    best_target = tar;
-                } else if(tar.structureType == STRUCTURE_TOWER && !(best_target.structureType == STRUCTURE_SPAWN || best_target.structureType == STRUCTURE_EXTENSION)) {
-                    best_target = tar;
-                } else if (tar.structureType == STRUCTURE_STORAGE && !(best_target.structureType == STRUCTURE_SPAWN || best_target.structureType == STRUCTURE_EXTENSION || best_target.structureType == STRUCTURE_TOWER)) {
-                    best_target = tar;
-                }
-            }
+
+        if (targets.length > 0) {
+            var best_target = creep.pos.findClosestByPath(targets);
             if (creep.transfer(best_target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(best_target);
             }
         } else {
-            //creep.say('Going Home')
-            creep.moveTo(Game.spawns['Spawn1'])
+            if (creep.transfer(creep.room.storage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(creep.room.storage);
+            }
         }
+        //if(targets.length > 0) {
+        //    var best_target = targets[0];
+        //    for(var i in targets) {
+        //        var tar = targets[i];
+        //        if(tar.structureType == STRUCTURE_SPAWN) {
+        //            best_target = tar;
+        //        } else if(tar.structureType == STRUCTURE_EXTENSION && best_target.structureType != STRUCTURE_SPAWN) {
+        //            best_target = tar;
+        //        }
+        //    }
+        //    if (creep.transfer(best_target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+        //        creep.moveTo(best_target);
+        //    }
+        //} else {
+        //    //creep.say('Going Home')
+        //    creep.moveTo(Game.spawns['Spawn1'])
+        //}
     }
 };
 

@@ -1,14 +1,11 @@
-//var getStructures = require('get_structures');
+getStructures = require('get_structures');
 
-var assignClaimers = {
+var assignTransporters = {
 
     /** @param {Creep} creep **/
     run: function(avail_rooms) {
-        //var avail_sources = [];
-        //var assigned_sources = [];
-
-        var active_creeps = _.filter(Game.creeps, (creep) => (creep.memory.role == 'claimer' && creep.memory.assigned_room != undefined));
-        var inactive_creeps = _.filter(Game.creeps, (creep) => (creep.memory.role == 'claimer' && creep.memory.assigned_room == undefined));
+        var active_creeps = _.filter(Game.creeps, (creep) => (creep.memory.role == 'tower_filler' && creep.memory.assigned_room != undefined));
+        var inactive_creeps = _.filter(Game.creeps, (creep) => (creep.memory.role == 'tower_filler' && creep.memory.assigned_room == undefined));
 
         if (inactive_creeps.length == 0) {
             return;
@@ -32,33 +29,20 @@ var assignClaimers = {
                 }
             });
 
-            //console.log('Room: ',avail_rooms[i].name);
-            //console.log('Towers: ',towers.length);
-
-            // TODO: Change this to a check for a controlled controller
-            if (avail_rooms[i].controller.level > 0) {
-                //obj_map[obj_id] = 0;
-                continue;
-            } else if (obj_id == 'E62N33') {
+            // If no towers are present don't assign a filler
+            if (towers.length < 1) {
                 continue;
             } else {
                 obj_map[obj_id] = max_assigned;
             }
-            //console.log('Pushing: ', obj_id);
             avail_objs.push(obj_id);
         }
-
-        console.log('obj_map: ',obj_map);
-        console.log('avail_objs_1',avail_objs);
 
         for (var i in active_creeps) {
             var creep = active_creeps[i];
             var obj_id = creep.memory.assigned_room;
 
             obj_map[obj_id] -= 1;
-
-            //console.log('obj_id',obj_id);
-            //console.log('obj_map[obj_id]',obj_map[obj_id]);
 
             if (obj_map[obj_id] <= 0) {
                 var index = avail_objs.indexOf(obj_id);
@@ -68,15 +52,13 @@ var assignClaimers = {
             }
         }
 
-        console.log('avail_objs_2',avail_objs);
-
         return avail_objs
     },
 
     assignObjects(inactive_creeps,avail_objs) {
         for (var i in avail_objs) {
             var obj_id = avail_objs[i];
-            console.log('Available rooms: ',obj_id);
+            console.log('Available container: ',obj_id);
             if (inactive_creeps.length > 0) {
                 var creep = inactive_creeps[0];
                 creep.memory.assigned_room = obj_id;
@@ -87,4 +69,4 @@ var assignClaimers = {
     }
 };
 
-module.exports = assignClaimers;
+module.exports = assignTransporters;

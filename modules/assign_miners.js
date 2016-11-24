@@ -19,8 +19,8 @@ var assignMiners = {
                 var source = sources[j];
                 if (source.id == '57ef9e5a86f108ae6e60f2e7') {
                     continue;
-                //} else if (source.id == '57ef9e8386f108ae6e60f67c') {
-                //    continue;
+                } else if (source.id == '57ef9e6f86f108ae6e60f4b6') {
+                    continue;
                 }
                 avail_sources.push(source.id);
             }
@@ -38,13 +38,25 @@ var assignMiners = {
         }
 
         for (var i in avail_sources) {
-            var source = avail_sources[i];
-            console.log('Available source: ',source);
+            var source_obj = Game.getObjectById(avail_sources[i]);
+            var source_id = source_obj.id;
+            var source_room = source_obj.room;
+
+            console.log('Available source: ',source_id);
             if (inactive_miners.length > 0) {
                 var creep = inactive_miners[0];
-                creep.memory.assigned_source = source;
+                if (source_room.memory.source_links != undefined) {
+                    var source_link_ids = source_room.memory.source_links;
+                    var source_link_objs = []
+                    for (var j in source_link_ids) {
+                        source_link_objs.push(Game.getObjectById(source_link_ids[j]));
+                    }
+                    var closest_source_link = source_obj.pos.findClosestByPath(source_link_objs);
+                    creep.memory.assigned_link = closest_source_link.id;
+                }
+                creep.memory.assigned_source = source_id;
                 inactive_miners.splice(0,1);
-                console.log('Assigned ',creep.name,' to ',source);
+                console.log('Assigned ',creep.name,' to ',source_id);
             }
         }
     }

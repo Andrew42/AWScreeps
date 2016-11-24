@@ -10,6 +10,7 @@ var assignJanitors = {
         var active_creeps = _.filter(Game.creeps, (creep) => (creep.memory.role == 'janitor' && creep.memory.assigned_room != undefined));
         var inactive_creeps = _.filter(Game.creeps, (creep) => (creep.memory.role == 'janitor' && creep.memory.assigned_room == undefined));
 
+        //console.log('Inactive janitors: ',inactive_creeps.length);
         if (inactive_creeps.length == 0) {
             return;
         }
@@ -35,10 +36,10 @@ var assignJanitors = {
             //console.log('Room: ',avail_rooms[i].name);
             //console.log('Towers: ',towers.length);
 
-            // If there are 2 towers present don't create a janitor
-            if (towers.length > 1) {
-                //obj_map[obj_id] = 0;
-                continue;
+            // If there is a tower present only use 1 janitor
+            if (towers.length > 0) {
+                obj_map[obj_id] = 1;
+                //continue;
             //} else if (obj_id == 'E63N33') {
             //    continue;
             } else {
@@ -68,7 +69,7 @@ var assignJanitors = {
             }
         }
 
-        //console.log('avail_objs_2',avail_objs);
+        console.log('avail_objs_2',avail_objs);
 
         return avail_objs
     },

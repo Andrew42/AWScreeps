@@ -6,24 +6,22 @@ var roleBuilder = {
             creep.memory.building = false;
             creep.say('harvesting');
         }
+
+
         if(!creep.memory.building && creep.carry.energy == creep.carryCapacity) {
             creep.memory.building = true;
             creep.say('building');
         }
 
         if(creep.memory.building) {
-            //creep.say('building');
-            var const_sites = Game.constructionSites;
-            var target = undefined;
-            for (i in const_sites) {
-                var site = const_sites[i];
-                if (site.id) {
-                    target = Game.getObjectById(site.id);
-                    break;
-                }
-            }
-            if (creep.build(target) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(target)
+            if (this.buildStructures(creep)) {
+                creep.say('building');
+            } else if (creep.room.name != creep.memory.home) {
+                //console.log('creep.room.name: ',creep.room.name);
+                //console.log('creep.home: ',creep.home);
+                this.moveToRoom(creep,creep.memory.home);
+            } else if (this.repairStructures(creep)){
+                creep.say('repairing');
             }
         } else {
             var dropped_resources = creep.room.find(FIND_DROPPED_RESOURCES, {
@@ -71,6 +69,83 @@ var roleBuilder = {
                 }
             }
         }
+    },
+
+    buildStructures: function(creep) {
+        //creep.say('building');
+        var const_sites = Game.constructionSites;
+        //console.log('Sites: ',const_sites);
+        //console.log('Length: ',Object.keys(const_sites).length);
+        if (Object.keys(const_sites).length == 0) {
+            return false;
+        }
+
+        var target = undefined;
+        for (i in const_sites) {
+            var site = const_sites[i];
+            if (site.id) {
+                target = Game.getObjectById(site.id);
+                break;
+            }
+        }
+        if (creep.build(target) == ERR_NOT_IN_RANGE) {
+            creep.moveTo(target)
+        }
+
+        return true;
+    },
+
+    repairStructures: function(creep) {
+        var wall_cut = 125000;
+        var rampart_cut = 125000;
+        var plain_cut = 2000;
+        var swamp_cut = 10000;
+        var damagedStructures = creep.room.find(FIND_STRUCTURES, {
+            filter: (structure) => structure.hits < structure.hitsMax
+        });
+        var heal_tar = undefined;
+        for (var i in damagedStructures) {
+            var struct = damagedStructures[i];
+            if (struct.structureType == STRUCTURE_WALL) {
+                if (struct.hits < wall_cut) {
+                    heal_tar = struct;
+                    break;
+                }
+            } else if (struct.structureType == STRUCTURE_RAMPART) {
+                if (struct.hits < rampart_cut) {
+                    heal_tar = struct;
+                    break;
+                }
+            } else if (struct.structureType == STRUCTURE_ROAD && Game.map.getTerrainAt(struct.pos) == 'plain') {
+                if (struct.hits < plain_cut) {
+                    heal_tar = struct;
+                    break;
+                }
+            } else if (struct.structureType == STRUCTURE_ROAD && Game.map.getTerrainAt(struct.pos) == 'swamp') {
+                if (struct.hits < swamp_cut) {
+                    heal_tar = struct;
+                    break;
+                }
+            } else {
+                heal_tar = struct;
+                break;
+            }
+        }
+
+        if (heal_tar == undefined) {
+            return;
+        } else {
+            if (creep.repair(heal_tar) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(heal_tar);
+            }
+        }
+
+        return true;
+    },
+
+    moveToRoom: function(creep,room_name) {
+        creep.moveTo(new RoomPosition(25, 25, room_name));
+        //creep.say(room_name);
     }
 };
 

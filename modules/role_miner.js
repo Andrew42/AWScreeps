@@ -17,6 +17,21 @@ var roleMiner = {
             if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(source);
             }
+        } else if (creep.pos.isNearTo(Game.getObjectById(creep.memory.assigned_link))) {
+
+            //var test_creep = Game.getObjectById('5836c07d6c77593b101e7aa9')
+            //var test_link_id = test_creep.memory.assigned_link;
+            //var correct_link_id = '58361ed2ed0581cd46e5550f'
+            //console.log('Name: ',test_creep.name);
+            //console.log('Test link id: ',test_link_id);
+            //console.log('Correct link id: ',correct_link_id);
+            //console.log('Link Pos: ',Game.getObjectById(correct_link_id).structureType);
+            //console.log('isNearLink: ',test_creep.pos.isNearTo(Game.getObjectById(test_creep.memory.assigned_link)));
+            //console.log('isNearSource: ',test_creep.pos.isNearTo(Game.getObjectById(test_creep.memory.assigned_source)));
+
+
+
+            creep.transfer(Game.getObjectById(creep.memory.assigned_link),RESOURCE_ENERGY);
         } else {
             var closestContainer = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                 filter: (structure) => structure.structureType == STRUCTURE_CONTAINER
@@ -25,6 +40,10 @@ var roleMiner = {
                 creep.moveTo(closestContainer);
             }
         }
+    },
+
+    placeLink: function(creep) {
+
     }
 };
 
