@@ -1,21 +1,15 @@
-getStructures = require('get_structures');
-
-
-//if (creep.source_room.memory.source_links != undefined) {
-//    var source_link_ids = creep.source_room.memory.source_links;
-//    var source_link_objs = []
-//    for (var j in source_link_ids) {
-//        source_link_objs.push(Game.getObjectById(source_link_ids[j]));
-//    }
-//    var closest_source_link = source_obj.pos.findClosestByPath(source_link_objs);
-//    creep.memory.assigned_link = closes_source_link.id;
-//}
-
 var assignStructLinks =  {
     run: function(avail_rooms) {
         for (var i in avail_rooms) {
             var curr_room = avail_rooms[i];
-            var struct_ids = getStructures.run([curr_room],STRUCTURE_LINK);
+
+            //console.log('curr_room:',curr_room);
+
+            var struct_ids = this.getStructures([curr_room],STRUCTURE_LINK);
+
+            if (struct_ids.length == undefined) {
+                continue;
+            }
 
             var active_struct_ids = _.filter(struct_ids, (struct) => 
                 (Game.getObjectById(struct).structureType == STRUCTURE_LINK && Memory.struct_links[struct].link_type != null)
@@ -45,7 +39,7 @@ var assignStructLinks =  {
         }
     },
 
-    getAvailableObjects(curr_room) {
+    getAvailableObjects: function(curr_room) {
         var avail_objs = curr_room.find(FIND_STRUCTURES, {
             filter: (structure) => {
                 return (structure.structureType == STRUCTURE_CONTAINER || structure.structureType == STRUCTURE_STORAGE)
@@ -54,7 +48,7 @@ var assignStructLinks =  {
         return avail_objs;
     },
 
-    assignObjects(inactive_structs,avail_targets) {
+    assignObjects: function(inactive_structs,avail_targets) {
         for (var i in inactive_structs) {
             var curr_struct = Game.getObjectById(inactive_structs[i]);
             var closest_struct = curr_struct.pos.findClosestByRange(avail_targets);
@@ -75,8 +69,25 @@ var assignStructLinks =  {
                 console.log('Unknown structure type: ',curr_struc.structureType);
             }
         }
+    },
+    getStructures: function(rooms,structure_constant) {
+        var structs = [];
+        for (var i in rooms) {
+            var room = rooms[i];
+            var room_structs = room.find(FIND_STRUCTURES);
+            for (var j in room_structs) {
+                var struct = room_structs[j];
+                if (struct.structureType == structure_constant) {
+                    //console.log('Structure ID: ',struct.id);
+                    structs.push(struct.id);
+                } else {
+                    //console.log('Other: ',struct.structureType);
+                }
+            }
+        }
+        //console.log('Structs:',structs);
+        return structs;
     }
-
 };
 
 module.exports = assignStructLinks;

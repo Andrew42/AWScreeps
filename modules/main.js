@@ -1,3 +1,4 @@
+var getStructures = require('get_structures');
 var roleMiner = require('role_miner');
 var roleHarvester = require('role_harvester');
 var roleUpgrader = require('role_upgrader');
@@ -9,6 +10,7 @@ var roleClaimer = require('role_claimer');
 var roleAttacker = require('role_attacker');
 var roleTowerFiller = require('role_tower_filler');
 var roleLinker = require('role_linker');
+var roleUpgradeBooster = require('role_upgrade_booster');
 var createWorkers = require('create_workers');
 var createFighters = require('create_fighters');
 var structTower = require('struct_tower');
@@ -19,25 +21,43 @@ var assignTransporters = require('assign_transporters');
 var assignClaimers = require('assign_claimers');
 var assignTowerFillers = require('assign_tower_fillers');
 var assignStructLinks = require('assign_struct_links');
-var getStructures = require('get_structures');
 
 // The optimal number of workers
-Memory.worker_count = {
+Game.spawns['Spawn1'].memory.worker_count = {
     min_harvesters: 2,
     min_builders: 2,
     min_upgraders: 2,
-    min_miners: 4,
-    min_janitors: 3,
-    min_transporters: 5,
+    min_miners: 5,
+    min_janitors: 4,
+    min_transporters: 7,
     min_tower_fillers: 1,
-    min_linkers: 1
+    min_linkers: 1,
+    min_upgrade_boosters: 0
+};
+Game.spawns['Spawn1'].memory.fighter_count = {
+    min_attackers: 0,
+    min_scouts: 3,
+    min_claimers: 3
 };
 
-Memory.fighter_count = {
-    min_attackers: 0,
-    min_scouts: 2,
-    min_claimers: 2
-};
+// FOR SIMULATION
+// The optimal number of workers
+//Game.spawns['Spawn1'].memory.worker_count = {
+//    min_harvesters: 2,
+//    min_builders: 0,
+//    min_upgraders: 0,
+//    min_miners: 3,
+//    min_janitors: 0,
+//    min_transporters: 1,
+//    min_tower_fillers: 0,
+//    min_linkers: 0,
+//    min_upgrade_boosters: 0
+//};
+//Game.spawns['Spawn1'].memory.fighter_count = {
+//    min_attackers: 0,
+//    min_scouts: 0,
+//    min_claimers: 0
+//};
 
 //Memory.struct_links = {
 //    '583626d1e88c4dfa1e41aaa2': {link_type: null},
@@ -59,16 +79,23 @@ module.exports.loop = function () {
     }
 
     //Game.rooms --> Dictionary - {'room_name': room_obj}
-    var my_rooms = ['E62N34','E63N33','E63N34'];
+    var my_rooms_1 = ['E62N33','E62N34','E63N33','E63N34'];
+    var scout_rooms = ['E62N33','E62N34','E63N33'];
+    var attack_rooms = [];
+    //var new_scout_room = 'E62N33';
+    //scout_rooms.push(new_scout_room); 
+    //var attack_room = 'E63N33';
+    //var attack_room = 'E64N34';
+
+    //var my_rooms_1 = ['sim'];
     var avail_rooms = {};
-    for (var i in my_rooms) {
-        var room_name = my_rooms[i];
+    for (var i in my_rooms_1) {
+        var room_name = my_rooms_1[i];
         avail_rooms[room_name] = Game.rooms[room_name];
     }
 
     var spawn = Game.spawns['Spawn1'];  // Dictionary - {'spawn_name': spawn_obj}
-    var towers = getStructures.run([spawn.room],STRUCTURE_TOWER);
-    var links = getStructures.run([spawn.room],STRUCTURE_LINK);
+
 
     assignMiners.run(avail_rooms);
     assignJanitors.run(avail_rooms);
@@ -78,23 +105,26 @@ module.exports.loop = function () {
 
     assignStructLinks.run(avail_rooms);
 
-    createWorkers.run(spawn);
-    createFighters.run(spawn);
+    for (var i in Game.spawns) {
+        var spawn = Game.spawns[i];
+        var towers = getStructures.run([spawn.room],STRUCTURE_TOWER);
+        var links = getStructures.run([spawn.room],STRUCTURE_LINK);
+        //console.log('Curr Spawn Name:',spawn.name);
+        
+        createWorkers.run(spawn);
+        createFighters.run(spawn);
 
-    for (var i in towers) {
-        var t_obj = Game.getObjectById(towers[i]);
-        structTower.run(t_obj);
+        for (var i in towers) {
+            var t_obj = Game.getObjectById(towers[i]);
+            structTower.run(t_obj);
+        }
+
+        for (var i in links) {
+            var l_obj = Game.getObjectById(links[i]);
+            structLink.run(l_obj);
+        }
     }
 
-    for (var i in links) {
-        var l_obj = Game.getObjectById(links[i]);
-        structLink.run(l_obj);
-    }
-
-    var scout_rooms = my_rooms;
-
-    //var attack_room = 'E63N33';
-    //var attack_room = 'E64N34';
 
     var s_counter = 0;
     for (var name in Game.creeps) {
@@ -122,15 +152,22 @@ module.exports.loop = function () {
             roleLinker.run(creep);
         }
 
-        if (creep.memory.role == 'scout' && scout_rooms[s_counter] != undefined) {
-            if (Game.rooms[scout_rooms[s_counter]].controller.level == 0) {
+        if (creep.memory.role == 'scout') {
+            if (scout_rooms[s_counter] != undefined) {                
+                //if (Game.rooms[scout_rooms[s_counter]].controller.level == 0) {
+                //    roleScout.moveToRoom(creep,scout_rooms[s_counter]);
+                //    s_counter += 1;
+                //}
+                //console.log('Scouting:',scout_rooms[s_counter]);
                 roleScout.moveToRoom(creep,scout_rooms[s_counter]);
                 s_counter += 1;
             }
         } else if (creep.memory.role == 'claimer') {
             roleClaimer.run(creep)
         } else if (creep.memory.role == 'attacker') {
-            roleAttacker.run(creep,attack_room);
+            if (attack_rooms.length > 0) {
+                roleAttacker.run(creep,attack_rooms[0]);
+            }
         }
     }
 }

@@ -58,9 +58,13 @@ var roleHarvester = {
                 creep.moveTo(best_target);
             }
         } else {
-            if (creep.transfer(creep.room.storage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(creep.room.storage);
-            }
+            //if (creep.transfer(creep.room.storage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+            //    creep.moveTo(creep.room.storage);
+            //}
+
+            creep.moveTo(Game.spawns['Spawn1']);
+            //var home_spawn = Game.getObjectById(creep.spawn_id);
+            //creep.moveTo(home_spawn);
         }
         //if(targets.length > 0) {
         //    var best_target = targets[0];

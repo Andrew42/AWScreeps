@@ -19,8 +19,6 @@ var assignMiners = {
                 var source = sources[j];
                 if (source.id == '57ef9e5a86f108ae6e60f2e7') {
                     continue;
-                } else if (source.id == '57ef9e6f86f108ae6e60f4b6') {
-                    continue;
                 }
                 avail_sources.push(source.id);
             }

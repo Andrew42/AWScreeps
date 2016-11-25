@@ -20,25 +20,28 @@ var createFighters = {
         var curr_total_creeps = attackers.length + scouts.length + claimers.length;
         var curr_room_name = spawn.room.name
 
-        console.log('Total Fighter Creeps: ' + curr_total_creeps + '/' + _.sum(Memory.fighter_count));
+        console.log('Total Fighter Creeps: ' + curr_total_creeps + '/' + _.sum(spawn.memory.fighter_count));
 
 
-        if (attackers.length < Memory.fighter_count.min_attackers) {
+        if (attackers.length < spawn.memory.fighter_count.min_attackers) {
             var newName = spawn.createCreep(fighter_template, undefined, {
                 role: 'attacker',
-                home: curr_room_name
+                home: curr_room_name,
+                spawn_id: spawn.id
             });
             console.log('Spawning new attacker: ',newName);
-        } else if (scouts.length < Memory.fighter_count.min_scouts) {
+        } else if (scouts.length < spawn.memory.fighter_count.min_scouts) {
             var newName = spawn.createCreep(scout_template, undefined, {
                 role: 'scout',
-                home: curr_room_name
+                home: curr_room_name,
+                spawn_id: spawn.id
             });
             console.log('Spawning new scout: ',newName);
-        } else if (claimers.length < Memory.fighter_count.min_claimers) {
+        } else if (claimers.length < spawn.memory.fighter_count.min_claimers) {
             var newName = spawn.createCreep(claimer_template, undefined, {
                 role: 'claimer',
                 home: curr_room_name,
+                spawn_id: spawn.id,
                 assigned_room: undefined
             });
             console.log('Spawning new claimer: ',newName)

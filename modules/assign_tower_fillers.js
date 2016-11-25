@@ -1,6 +1,4 @@
-getStructures = require('get_structures');
-
-var assignTransporters = {
+var assignTowerFillers = {
 
     /** @param {Creep} creep **/
     run: function(avail_rooms) {
@@ -55,7 +53,7 @@ var assignTransporters = {
         return avail_objs
     },
 
-    assignObjects(inactive_creeps,avail_objs) {
+    assignObjects: function(inactive_creeps,avail_objs) {
         for (var i in avail_objs) {
             var obj_id = avail_objs[i];
             console.log('Available container: ',obj_id);
@@ -66,7 +64,7 @@ var assignTransporters = {
                 console.log('Assigned ',creep.name,' to ',obj_id);
             }
         }
-    }
+    },
 };
 
-module.exports = assignTransporters;
+module.exports = assignTowerFillers;

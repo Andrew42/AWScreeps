@@ -79,9 +79,9 @@ var roleJanitor = {
 
     repair: function(creep) {
         var wall_cut = 125000;
-        var rampart_cut = 125000;
-        var plain_cut = 2000;
-        var swamp_cut = 10000;
+        var rampart_cut = 160000;
+        var plain_cut = 1250;
+        var swamp_cut = 7500;
         var container_cut = 100000;
         var damagedStructures = creep.room.find(FIND_STRUCTURES, {
             filter: (structure) => structure.hits < structure.hitsMax
@@ -96,6 +96,9 @@ var roleJanitor = {
                 }
             } else if (struct.structureType == STRUCTURE_RAMPART) {
                 if (struct.hits < rampart_cut) {
+                    creep.memory.repair_to_val = true;
+                    creep.memory.repair_cap = 175000;
+                    creep.memory.repair_target_id = struct.id;
                     heal_tar = struct;
                     break;
                 }
@@ -111,7 +114,7 @@ var roleJanitor = {
                 if (struct.hits < swamp_cut) {
                     heal_tar = struct;
                     creep.memory.repair_to_val = true;
-                    creep.memory.repair_cap = 22500;
+                    creep.memory.repair_cap = 25000;
                     creep.memory.repair_target_id = struct.id;
                     break;
                 }

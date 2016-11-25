@@ -1,5 +1,3 @@
-//var getStructures = require('get_structures');
-
 var assignJanitors = {
 
     /** @param {Creep} creep **/

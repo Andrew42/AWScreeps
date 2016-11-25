@@ -1,5 +1,3 @@
-//var getStructures = require('get_structures');
-
 var assignClaimers = {
 
     /** @param {Creep} creep **/
@@ -38,8 +36,6 @@ var assignClaimers = {
             // TODO: Change this to a check for a controlled controller
             if (avail_rooms[i].controller.level > 0) {
                 //obj_map[obj_id] = 0;
-                continue;
-            } else if (obj_id == 'E62N33') {
                 continue;
             } else {
                 obj_map[obj_id] = max_assigned;

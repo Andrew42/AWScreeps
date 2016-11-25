@@ -59,8 +59,9 @@ var roleTowerFiller = {
             }
         } else {
             return false;
+            //var home_spawn = Game.getObjectById(creep.spawn_id);
             //creep.say('Going Home')
-            //creep.moveTo(Game.spawns['Spawn1'])
+            //creep.moveTo(home_spawn);
         }
 
         return true;
