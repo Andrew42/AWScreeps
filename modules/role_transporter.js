@@ -79,14 +79,12 @@ var roleTransporter = {
         console.log('\tcurr index:',path_index);
         console.log('\tdirection:',direction);
 
-        //creep.memory.path_index += 1;
         var mov_result = creep.move(direction);
         if (mov_result == OK) {
             creep.memory.path_index += 1;
             console.log('\tMoving forward...');
             console.log('\tNew path index:',creep.memory.path_index)
         } else {
-            //creep.memory.path_index -= 1;
             console.log('\tFORWARD_ERROR:',mov_result);
         }
 
@@ -108,14 +106,12 @@ var roleTransporter = {
         console.log('\tcurr index:',path_index);
         console.log('\tdirection:',direction);
 
-        //creep.memory.path_index -= 1;
         var mov_result = creep.move(direction);
         if (mov_result == OK) {
             creep.memory.path_index -= 1;
             console.log('\tMoving backward...');
             console.log('\tNew path index:',creep.memory.path_index)
         } else {
-            //creep.memory.path_index += 1;
             console.log('\tBACKWARD_ERROR:',mov_result)
         }
     },

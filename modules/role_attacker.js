@@ -4,6 +4,7 @@ var roleAttacker = {
     run: function(creep,attack_room) {
         creep.memory.attack_room = attack_room;
         if (creep.room.name != creep.memory.attack_room) {
+            creep.say(creep.memory.attack_room);
             this.moveToRoom(creep,creep.memory.attack_room);
         } else {
             var hostile_creeps = creep.room.find(FIND_HOSTILE_CREEPS);
@@ -14,14 +15,13 @@ var roleAttacker = {
             } else {
                 //this.attackStructure(creep,STRUCTURE_WALL);
                 //5830c6a7c887b6b9030cd72c
-                this.attackObject(creep,'5830c9668147cbe70dbf9a72')
+                this.moveToRoom(creep,creep.room.name);
             }
         }
     },
 
     moveToRoom: function(creep,room_name) {
-        creep.moveTo(new RoomPosition(27, 35, room_name));
-        creep.say(room_name);
+        creep.moveTo(new RoomPosition(25, 25, room_name));
     },
 
     attackCreep: function(creep,hostile_creeps) {

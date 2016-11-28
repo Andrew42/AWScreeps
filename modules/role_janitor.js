@@ -78,8 +78,8 @@ var roleJanitor = {
     },
 
     repair: function(creep) {
-        var wall_cut = 125000;
-        var rampart_cut = 160000;
+        var wall_cut = 150000;
+        var rampart_cut = 180000;
         var plain_cut = 1250;
         var swamp_cut = 7500;
         var container_cut = 100000;
@@ -97,7 +97,7 @@ var roleJanitor = {
             } else if (struct.structureType == STRUCTURE_RAMPART) {
                 if (struct.hits < rampart_cut) {
                     creep.memory.repair_to_val = true;
-                    creep.memory.repair_cap = 175000;
+                    creep.memory.repair_cap = 200000;
                     creep.memory.repair_target_id = struct.id;
                     heal_tar = struct;
                     break;
@@ -143,6 +143,10 @@ var roleJanitor = {
 
     repairToPerc: function(creep,repair_cap,repair_target_id) {
         var repair_target = Game.getObjectById(repair_target_id);
+        if (repair_target == null) {
+            creep.memory.repair_to_perc = false;
+        }
+
         if (repair_target.hits >= repair_target.hitsMax*repair_cap) {
             creep.memory.repair_to_perc = false;
             return;
@@ -154,6 +158,10 @@ var roleJanitor = {
 
     repairToVal: function(creep,repair_cap,repair_target_id) {
         var repair_target = Game.getObjectById(repair_target_id);
+        if (repair_target == null) {
+            creep.memory.repair_to_val = false;
+        }
+
         if (repair_cap > repair_target.hitsMax) {
             repair_cap = repair_target.hitsMax;
         }

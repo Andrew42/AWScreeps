@@ -1,14 +1,15 @@
 var assignTowerFillers = {
 
     /** @param {Creep} creep **/
-    run: function(avail_rooms) {
-        var active_creeps = _.filter(Game.creeps, (creep) => (creep.memory.role == 'tower_filler' && creep.memory.assigned_room != undefined));
-        var inactive_creeps = _.filter(Game.creeps, (creep) => (creep.memory.role == 'tower_filler' && creep.memory.assigned_room == undefined));
+    run : function(city) {
+        var active_creeps   = _.filter(Game.creeps, (creep) => (creep.memory.role == 'tower_filler' && creep.memory.home == city && creep.memory.assigned_room != undefined));
+        var inactive_creeps = _.filter(Game.creeps, (creep) => (creep.memory.role == 'tower_filler' && creep.memory.home == city && creep.memory.assigned_room == undefined));
 
         if (inactive_creeps.length == 0) {
             return;
         }
 
+        var avail_rooms = Memory.city_suburbs[city];
         var max_assigned = 1;
         var avail_objs = this.getAvailableObjects(active_creeps,avail_rooms,max_assigned);
         this.assignObjects(inactive_creeps,avail_objs);
@@ -20,8 +21,9 @@ var assignTowerFillers = {
         var avail_objs = [];
         var obj_map = {};
         for (var i in avail_rooms) {
-            var obj_id = avail_rooms[i].name;
-            var towers = avail_rooms[i].find(FIND_STRUCTURES, {
+            var room = Game.rooms[avail_rooms[i]];
+            var obj_id = room.name;
+            var towers = room.find(FIND_STRUCTURES, {
                 filter: (structure) => {
                     return structure.structureType == STRUCTURE_TOWER
                 }

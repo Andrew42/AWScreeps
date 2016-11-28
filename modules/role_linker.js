@@ -21,7 +21,7 @@ var roleTemplate = {
     getCargo: function(creep) {
         //var assigned_container = Game.getObjectById(creep.memory.assigned_container);
         var assigned_link = Game.getObjectById(creep.room.memory.storage_link_id);
-        if (creep.withdraw(assigned_link, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE && assigned_link.energy > 0) {
+        if (creep.withdraw(assigned_link, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
             creep.moveTo(assigned_link);
         }
     },

@@ -1,21 +1,18 @@
 var assignJanitors = {
 
     /** @param {Creep} creep **/
-    run: function(avail_rooms) {
-        //var avail_sources = [];
-        //var assigned_sources = [];
+    run: function(city) {
+        var active_creeps   = _.filter(Game.creeps, (creep) => (creep.memory.role == 'janitor' && creep.memory.home == city && creep.memory.assigned_room != undefined));
+        var inactive_creeps = _.filter(Game.creeps, (creep) => (creep.memory.role == 'janitor' && creep.memory.home == city && creep.memory.assigned_room == undefined));
 
-        var active_creeps = _.filter(Game.creeps, (creep) => (creep.memory.role == 'janitor' && creep.memory.assigned_room != undefined));
-        var inactive_creeps = _.filter(Game.creeps, (creep) => (creep.memory.role == 'janitor' && creep.memory.assigned_room == undefined));
-
-        //console.log('Inactive janitors: ',inactive_creeps.length);
         if (inactive_creeps.length == 0) {
             return;
         }
 
+        var suburbs = Memory.city_suburbs[city];
         var max_assigned = 1;
-        var avail_objs = this.getAvailableObjects(active_creeps,avail_rooms,max_assigned);
-        this.assignObjects(inactive_creeps,avail_objs);
+        var avail_rooms = this.getAvailableObjects(active_creeps,suburbs,max_assigned);
+        this.assignObjects(inactive_creeps,avail_rooms);
     },
 
     // NOTE: We should just return the obj_map dictionary instead, so that we can ensure we don't over-assign inactive creeps during assignment
@@ -24,8 +21,9 @@ var assignJanitors = {
         var avail_objs = [];
         var obj_map = {};
         for (var i in avail_rooms) {
-            var obj_id = avail_rooms[i].name;
-            var towers = avail_rooms[i].find(FIND_STRUCTURES, {
+            var room = Game.rooms[avail_rooms[i]];
+            var obj_id = avail_rooms[i];
+            var towers = room.find(FIND_STRUCTURES, {
                 filter: (structure) => {
                     return structure.structureType == STRUCTURE_TOWER
                 }
@@ -38,8 +36,6 @@ var assignJanitors = {
             if (towers.length > 0) {
                 obj_map[obj_id] = 1;
                 //continue;
-            //} else if (obj_id == 'E63N33') {
-            //    continue;
             } else {
                 obj_map[obj_id] = max_assigned;
             }

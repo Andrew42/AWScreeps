@@ -1,16 +1,15 @@
-var assignClaimers = {
+var assignReservers = {
 
     /** @param {Creep} creep **/
-    run: function(avail_rooms) {
-        //var avail_sources = [];
-        //var assigned_sources = [];
-
-        var active_creeps = _.filter(Game.creeps, (creep) => (creep.memory.role == 'claimer' && creep.memory.assigned_room != undefined));
-        var inactive_creeps = _.filter(Game.creeps, (creep) => (creep.memory.role == 'claimer' && creep.memory.assigned_room == undefined));
+    run: function(city) {
+        var active_creeps   = _.filter(Game.creeps, (creep) => (creep.memory.role == 'reserver' && creep.memory.home == city && creep.memory.assigned_room != undefined));
+        var inactive_creeps = _.filter(Game.creeps, (creep) => (creep.memory.role == 'reserver' && creep.memory.home == city && creep.memory.assigned_room == undefined));
 
         if (inactive_creeps.length == 0) {
             return;
         }
+
+        var avail_rooms = Memory.city_suburbs[city];
 
         var max_assigned = 1;
         var avail_objs = this.getAvailableObjects(active_creeps,avail_rooms,max_assigned);
@@ -23,18 +22,19 @@ var assignClaimers = {
         var avail_objs = [];
         var obj_map = {};
         for (var i in avail_rooms) {
-            var obj_id = avail_rooms[i].name;
-            var towers = avail_rooms[i].find(FIND_STRUCTURES, {
-                filter: (structure) => {
-                    return structure.structureType == STRUCTURE_TOWER
-                }
-            });
+            var room = Game.rooms[avail_rooms[i]];
+            var obj_id = room.name;
+            //var towers = avail_rooms[i].find(FIND_STRUCTURES, {
+            //    filter: (structure) => {
+            //        return structure.structureType == STRUCTURE_TOWER
+            //    }
+            //});
 
             //console.log('Room: ',avail_rooms[i].name);
             //console.log('Towers: ',towers.length);
 
             // TODO: Change this to a check for a controlled controller
-            if (avail_rooms[i].controller.level > 0) {
+            if (room.controller.level > 0) {
                 //obj_map[obj_id] = 0;
                 continue;
             } else {
@@ -83,4 +83,4 @@ var assignClaimers = {
     }
 };
 
-module.exports = assignClaimers;
+module.exports = assignReservers;

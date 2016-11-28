@@ -1,68 +1,148 @@
-var getStructures = require('get_structures');
-var roleMiner = require('role_miner');
-var roleHarvester = require('role_harvester');
-var roleUpgrader = require('role_upgrader');
-var roleBuilder = require('role_builder');
-var roleJanitor = require('role_janitor');
-var roleScout = require('role_scout');
-var roleTransporter = require('role_transporter');
-var roleClaimer = require('role_claimer');
-var roleAttacker = require('role_attacker');
-var roleTowerFiller = require('role_tower_filler');
-var roleLinker = require('role_linker');
+var getStructures      = require('get_structures');
+var roleMiner          = require('role_miner');
+var roleHarvester      = require('role_harvester');
+var roleUpgrader       = require('role_upgrader');
+var roleBuilder        = require('role_builder');
+var roleJanitor        = require('role_janitor');
+var roleScout          = require('role_scout');
+var roleTransporter    = require('role_transporter');
+var roleReserver       = require('role_reserver');
+var roleAttacker       = require('role_attacker');
+var roleTowerFiller    = require('role_tower_filler');
+var roleLinker         = require('role_linker');
 var roleUpgradeBooster = require('role_upgrade_booster');
-var createWorkers = require('create_workers');
-var createFighters = require('create_fighters');
-var structTower = require('struct_tower');
-var structLink = require('struct_link');
-var assignMiners = require('assign_miners');
-var assignJanitors = require('assign_janitors');
+var roleStarter        = require('role_starter');
+var roleClaimer        = require('role_claimer');
+var roleDefender       = require('role_defender');
+var createWorkers      = require('create_workers');
+var createFighters     = require('create_fighters');
+var structTower        = require('struct_tower');
+var structLink         = require('struct_link');
+var assignMiners       = require('assign_miners');
+var assignJanitors     = require('assign_janitors');
 var assignTransporters = require('assign_transporters');
-var assignClaimers = require('assign_claimers');
+var assignReservers    = require('assign_reservers');
 var assignTowerFillers = require('assign_tower_fillers');
-var assignStructLinks = require('assign_struct_links');
+var assignStructLinks  = require('assign_struct_links');
+var assignDefenders    = require('assign_defenders');
 
-// The optimal number of workers
-Game.spawns['Spawn1'].memory.worker_count = {
-    min_harvesters: 2,
-    min_builders: 2,
-    min_upgraders: 2,
-    min_miners: 5,
-    min_janitors: 4,
-    min_transporters: 7,
-    min_tower_fillers: 1,
-    min_linkers: 1,
-    min_upgrade_boosters: 0
-};
-Game.spawns['Spawn1'].memory.fighter_count = {
-    min_attackers: 0,
-    min_scouts: 3,
-    min_claimers: 3
+// Order determines spawn priority
+Memory.all_roles = [
+    'harvester',
+    'janitor',
+    'linker',
+    'tower_filler',
+    'miner',
+    'builder',
+    'transporter',
+    'starter',
+    'upgrader',
+    'upgrade_booster'
+];
+
+// Target worker counts for my cities
+Memory.cities = {
+    'E63N34': {
+        worker_count: {
+            'harvester': 2,
+            'builder': 1,
+            'upgrader': 1,
+            'miner': 5,
+            'janitor': 4,
+            'transporter': 7,
+            'tower_filler': 1,
+            'linker': 1,
+            'upgrade_booster': 1,
+            'starter': 0
+        }
+    },
+    'E64N32': {
+        worker_count: {
+            'harvester': 0,
+            'builder': 0,
+            'upgrader': 0,
+            'miner': 0,
+            'janitor': 0,
+            'transporter': 0,
+            'tower_filler': 1,
+            'linker': 0,
+            'upgrade_booster': 0,
+            'starter': 4
+        }
+    }
 };
 
-// FOR SIMULATION
-// The optimal number of workers
-//Game.spawns['Spawn1'].memory.worker_count = {
-//    min_harvesters: 2,
-//    min_builders: 0,
-//    min_upgraders: 0,
-//    min_miners: 3,
-//    min_janitors: 0,
-//    min_transporters: 1,
-//    min_tower_fillers: 0,
-//    min_linkers: 0,
-//    min_upgrade_boosters: 0
-//};
+Memory.fighter_count = {
+    'attacker': 1,
+    'scout': 4,
+    'reserver': 3,
+    'claimer': 0,
+    'defender': 4
+}
+
+// Designated suburbs of each of my cities (Note: The city itself is always the last in the list)
+Memory.city_suburbs = {
+    'E63N34': [
+        'E62N33',
+        'E62N34',
+        'E63N33',
+        'E63N34'
+    ],
+    'E64N32': [
+        'E64N32'
+    ],
+}
+
+//// TODO: Will want to make fighter thresholds 'global'
 //Game.spawns['Spawn1'].memory.fighter_count = {
-//    min_attackers: 0,
-//    min_scouts: 0,
+//    min_attackers: 1,
+//    min_scouts: 4,
+//    min_reservers: 3,
 //    min_claimers: 0
 //};
 
-//Memory.struct_links = {
-//    '583626d1e88c4dfa1e41aaa2': {link_type: null},
-//    '58361ed2ed0581cd46e5550f': {link_type: null}
+//// TODO: Will want to make fighter thresholds 'global'
+//Game.spawns['Spawn2_1'].memory.fighter_count = {
+//    min_attackers: 0,
+//    min_scouts: 0,
+//    min_reservers: 0,
+//    min_claimers: 0
+//};
+
+//Game.spawns['Sim1'].memory.worker_count = {
+//    min_harvesters: 0,
+//    min_builders: 0,
+//    min_upgraders: 0,
+//    min_miners: 0,
+//    min_janitors: 0,
+//    min_transporters: 0,
+//    min_tower_fillers: 0,
+//    min_linkers: 0,
+//    min_upgrade_boosters: 0,
+//    min_starters: 4
 //}
+//Game.spawns['Sim1'].memory.fighter_count = {
+//    min_attackers: 0,
+//    min_scouts: 0,
+//    min_reservers: 0
+//};
+//Game.spawns['Sim2'].memory.worker_count = {
+//    min_harvesters: 1,
+//    min_builders: 0,
+//    min_upgraders: 0,
+//    min_miners: 0,
+//    min_janitors: 0,
+//    min_transporters: 0,
+//    min_tower_fillers: 0,
+//    min_linkers: 0,
+//    min_upgrade_boosters: 2,
+//    min_starters: 0
+//}
+//Game.spawns['Sim2'].memory.fighter_count = {
+//    min_attackers: 0,
+//    min_scouts: 0,
+//    min_reserver: 0
+//};
 
 Memory.counter = 0;
 
@@ -78,40 +158,41 @@ module.exports.loop = function () {
         }
     }
 
-    //Game.rooms --> Dictionary - {'room_name': room_obj}
-    var my_rooms_1 = ['E62N33','E62N34','E63N33','E63N34'];
-    var scout_rooms = ['E62N33','E62N34','E63N33'];
-    var attack_rooms = [];
-    //var new_scout_room = 'E62N33';
-    //scout_rooms.push(new_scout_room); 
-    //var attack_room = 'E63N33';
-    //var attack_room = 'E64N34';
+    var scout_rooms = ['E62N33','E62N34','E63N33','E64N33'];
+    var attack_rooms = ['E64N32'];
+    //var attack_rooms = ['E62N33']
+    //var attack_rooms = ['E63N34']
+    var boost_room = 'E64N32';
+    var claim_room = '';
 
-    //var my_rooms_1 = ['sim'];
-    var avail_rooms = {};
-    for (var i in my_rooms_1) {
-        var room_name = my_rooms_1[i];
-        avail_rooms[room_name] = Game.rooms[room_name];
+    var defend_rooms = [];
+    for (var city in Memory.city_suburbs) {
+        var suburbs = Memory.city_suburbs[city];
+        for (var i in suburbs) {
+            defend_rooms.push(suburbs[i]);
+        }
     }
 
-    var spawn = Game.spawns['Spawn1'];  // Dictionary - {'spawn_name': spawn_obj}
+    assignDefenders.run(defend_rooms);
 
 
-    assignMiners.run(avail_rooms);
-    assignJanitors.run(avail_rooms);
-    assignTransporters.run(avail_rooms);
-    assignTowerFillers.run(avail_rooms);
-    assignClaimers.run(avail_rooms);
+    for (var city in Memory.cities) {
+        console.log('City:',city);
+        assignMiners.run(city);
+        assignJanitors.run(city);
+        assignTransporters.run(city);
+        assignReservers.run(city);
+        assignTowerFillers.run(city);
+        assignStructLinks.run(city);
 
-    assignStructLinks.run(avail_rooms);
+        createWorkers.run(city);
+    }
 
     for (var i in Game.spawns) {
         var spawn = Game.spawns[i];
         var towers = getStructures.run([spawn.room],STRUCTURE_TOWER);
         var links = getStructures.run([spawn.room],STRUCTURE_LINK);
-        //console.log('Curr Spawn Name:',spawn.name);
         
-        createWorkers.run(spawn);
         createFighters.run(spawn);
 
         for (var i in towers) {
@@ -137,19 +218,23 @@ module.exports.loop = function () {
         if (creep.memory.role == 'miner') {
             roleMiner.run(creep);
         } else if (creep.memory.role == 'harvester') {
-            roleHarvester.run(creep,avail_rooms);
+            roleHarvester.run(creep);
         } else if (creep.memory.role == 'upgrader') {
-            roleUpgrader.run(creep,avail_rooms);
+            roleUpgrader.run(creep);
         } else if (creep.memory.role == 'builder') {
-            roleBuilder.run(creep,avail_rooms);
+            roleBuilder.run(creep);
         } else if (creep.memory.role == 'janitor') {
             roleJanitor.run(creep);
         } else if (creep.memory.role == 'transporter') {
-            roleTransporter.run(creep,avail_rooms);
+            roleTransporter.run(creep);
         } else if (creep.memory.role == 'tower_filler') {
             roleTowerFiller.run(creep);
         } else if (creep.memory.role == 'linker') {
             roleLinker.run(creep);
+        } else if (creep.memory.role == 'upgrade_booster') {
+            roleUpgradeBooster.run(creep,boost_room);
+        } else if (creep.memory.role == 'starter') {
+            roleStarter.run(creep);
         }
 
         if (creep.memory.role == 'scout') {
@@ -162,12 +247,16 @@ module.exports.loop = function () {
                 roleScout.moveToRoom(creep,scout_rooms[s_counter]);
                 s_counter += 1;
             }
-        } else if (creep.memory.role == 'claimer') {
-            roleClaimer.run(creep)
+        } else if (creep.memory.role == 'reserver') {
+            roleReserver.run(creep)
         } else if (creep.memory.role == 'attacker') {
             if (attack_rooms.length > 0) {
                 roleAttacker.run(creep,attack_rooms[0]);
             }
+        } else if (creep.memory.role == 'claimer') {
+            roleClaimer.run(creep,claim_room);
+        } else if (creep.memory.role == 'defender') {
+            roleDefender.run(creep);
         }
     }
 }

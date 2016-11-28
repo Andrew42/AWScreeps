@@ -1,7 +1,7 @@
 var roleHarvester = {
 
     /** @param {Creep} creep **/
-    run: function(creep,avail_rooms) {
+    run: function(creep) {
         //if(creep.carry.energy < creep.carryCapacity) {
         if (creep.carry.energy == 0) {
             this.getCargo(creep);
@@ -17,16 +17,21 @@ var roleHarvester = {
                 return res.amount > 50;
             }
         });
+
         if (dropped_resources.length > 0) {
             if (dropped_resources.length > 0) {
                 if(creep.pickup(dropped_resources[0]) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(dropped_resources[0])
                 }
             }
+        } else if (creep.room.storage != undefined) {
+            if (creep.withdraw(creep.room.storage,RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(creep.room.storage);
+            }
         } else {
             var roomContainers = creep.room.find(FIND_STRUCTURES, {
                 filter: (structure) => {
-                    return (structure.structureType == STRUCTURE_STORAGE && structure.store[RESOURCE_ENERGY] > creep.carryCapacity)
+                    return (structure.structureType == STRUCTURE_CONTAINER && structure.store[RESOURCE_ENERGY] > creep.carryCapacity)
                 }
             });
             var fullestContainer = roomContainers[0];
@@ -38,9 +43,9 @@ var roleHarvester = {
                     fullestContainer = tar;
                 }
             }
-        }
-        if (creep.withdraw(fullestContainer, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(fullestContainer);
+            if (creep.withdraw(fullestContainer, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(fullestContainer);
+            }
         }
     },
 
@@ -62,9 +67,9 @@ var roleHarvester = {
             //    creep.moveTo(creep.room.storage);
             //}
 
-            creep.moveTo(Game.spawns['Spawn1']);
-            //var home_spawn = Game.getObjectById(creep.spawn_id);
-            //creep.moveTo(home_spawn);
+            //creep.moveTo(Game.spawns['Spawn1']);
+            var home_spawn = Game.getObjectById(creep.spawn_id);
+            creep.moveTo(home_spawn);
         }
         //if(targets.length > 0) {
         //    var best_target = targets[0];

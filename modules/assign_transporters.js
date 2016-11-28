@@ -1,20 +1,18 @@
 var assignTransporters = {
 
     /** @param {Creep} creep **/
-    run: function(avail_rooms) {
-        var active_creeps = _.filter(Game.creeps, (creep) => (creep.memory.role == 'transporter' && creep.memory.assigned_container != undefined));
-        var inactive_creeps = _.filter(Game.creeps, (creep) => (creep.memory.role == 'transporter' && creep.memory.assigned_container == undefined));
+    run: function(city) {
+        var active_creeps   = _.filter(Game.creeps, (creep) => (creep.memory.role == 'transporter' && creep.memory.home == city && creep.memory.assigned_container != undefined));
+        var inactive_creeps = _.filter(Game.creeps, (creep) => (creep.memory.role == 'transporter' && creep.memory.home == city && creep.memory.assigned_container == undefined));
 
         if (inactive_creeps.length == 0 || inactive_creeps.length == undefined) {
             return;
         }
 
+        var suburbs = Memory.city_suburbs[city];
         var max_assigned = 2;
-        var avail_objs = this.getAvailableObjects(active_creeps,avail_rooms,max_assigned);
-        this.assignObjects(inactive_creeps,avail_objs);
-
-        //active_creeps = _.filter(Game.creeps, (creep) => (creep.memory.role == 'transporter' && creep.memory.assigned_container != undefined));
-        //this.assignPaths(active_creeps);
+        var avail_rooms = this.getAvailableObjects(active_creeps,suburbs,max_assigned);
+        this.assignObjects(inactive_creeps,avail_rooms);
     },
 
     // NOTE: We should just return the obj_map dictionary instead, so that we can ensure we don't over-assign inactive creeps during assignment
@@ -103,7 +101,7 @@ var assignTransporters = {
     getStructures: function(rooms,structure_constant) {
         var structs = [];
         for (var i in rooms) {
-            var room = rooms[i];
+            var room = Game.rooms[rooms[i]];
             var room_structs = room.find(FIND_STRUCTURES);
             for (var j in room_structs) {
                 var struct = room_structs[j];
