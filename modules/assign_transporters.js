@@ -2,15 +2,28 @@ var assignTransporters = {
 
     /** @param {Creep} creep **/
     run: function(city) {
-        var active_creeps   = _.filter(Game.creeps, (creep) => (creep.memory.role == 'transporter' && creep.memory.home == city && creep.memory.assigned_container != undefined));
-        var inactive_creeps = _.filter(Game.creeps, (creep) => (creep.memory.role == 'transporter' && creep.memory.home == city && creep.memory.assigned_container == undefined));
+        var active_creeps   = _.filter(Game.creeps,
+            (creep) => (
+                creep.memory.role == 'transporter' &&
+                creep.memory.home == city &&
+                !creep.memory.is_zombie &&
+                creep.memory.assigned_container != undefined
+            )
+        );
+        var inactive_creeps = _.filter(Game.creeps,
+            (creep) => (
+                creep.memory.role == 'transporter' &&
+                creep.memory.home == city &&
+                creep.memory.assigned_container == undefined
+            )
+        );
 
         if (inactive_creeps.length == 0 || inactive_creeps.length == undefined) {
             return;
         }
 
         var suburbs = Memory.city_suburbs[city];
-        var max_assigned = 2;
+        var max_assigned = 1;
         var avail_rooms = this.getAvailableObjects(active_creeps,suburbs,max_assigned);
         this.assignObjects(inactive_creeps,avail_rooms);
     },

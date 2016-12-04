@@ -1,23 +1,32 @@
-var roleUpgradeBooster = {
+var roleMinerBooster = {
     /** @param {Creep} creep **/
     run: function(creep,target_room) {
-        /* DONE */
-
         if (Game.rooms[target_room] == undefined) {
             console.log('Unknown room, make sure to scout it first!');
             return;
         }
 
-        if(creep.memory.upgrading && creep.carry.energy == 0) {
-            creep.memory.upgrading = false;
-            creep.say('collecting');
-        }
-        if(!creep.memory.upgrading && creep.carry.energy == creep.carryCapacity) {
-            creep.memory.upgrading = true;
-            creep.say('upgrading');
+        if (!creep.memory.mining && creep.carry.energy == 0) {
+            creep.memory.mining = true;
+            creep.say('mining');
         }
 
-        if (creep.memory.upgrading) {
+        if (creep.memory.mining && creep.carry.energy > creep.carryCapacity*0.9) {
+            creep.memory.mining = false;
+            creep.say('storing');
+        }
+
+        if (creep.memory.mining) {
+            /* NOT DONE */
+            var source = Game.getObjectById(creep.memory.assigned_source);
+            if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(source);
+            }
+        }
+
+
+
+        if (creep.carry.energy == 0) {
             this.storeCargo(creep,target_room);
         } else {
             this.getCargo(creep);
@@ -47,4 +56,4 @@ var roleUpgradeBooster = {
     }
 };
 
-module.exports = roleUpgradeBooster;
+module.exports = roleMinerBooster;

@@ -10,7 +10,10 @@ var assignDefenders = {
         avail_rooms = []
         for (var i in room_names) {
             var room_name = room_names[i];
-            if (Game.rooms[room_name].controller.level > 4) {
+            if (Game.rooms[room_name] == undefined) {
+                continue;
+            }
+            if (Game.rooms[room_name].controller.level > 7) {
                 continue;
             }
             avail_rooms.push(room_name);

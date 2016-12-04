@@ -4,10 +4,11 @@ var assignStructLinks =  {
 
         for (var i in avail_rooms) {
             var curr_room = avail_rooms[i];
-            if (curr_room == undefined) {
+            if (Game.rooms[curr_room] == undefined) {
                 continue;
             }
             
+            //console.log('strcut_link_room:',curr_room);
             var struct_ids = this.getStructures([curr_room],STRUCTURE_LINK);
 
             if (struct_ids.length == undefined) {
@@ -24,13 +25,14 @@ var assignStructLinks =  {
             if (inactive_struct_ids.length == 0) {
                 continue;
             } else {
-                var avail_targets = this.getAvailableObjects(active_struct_ids,curr_room);
+                var avail_targets = this.getAvailableObjects(Game.rooms[curr_room]);
                 this.assignObjects(inactive_struct_ids,avail_targets);
             }
         }
     },
 
     getAvailableObjects: function(curr_room) {
+        console.log('Curr_room',curr_room);
         var avail_objs = curr_room.find(FIND_STRUCTURES, {
             filter: (structure) => {
                 return (structure.structureType == STRUCTURE_CONTAINER || structure.structureType == STRUCTURE_STORAGE)

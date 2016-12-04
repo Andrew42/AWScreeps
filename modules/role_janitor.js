@@ -2,6 +2,11 @@ var roleJanitor = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
+        //if (creep.ticksToLive < 12 && creep.carry.energy == 0) {
+        //    console.log(creep.name,': SUDOKU');
+        //    creep.suicide();
+        //}
+
         if (creep.room.name != creep.memory.assigned_room) {
             creep.say('going home');
             if (creep.memory.assigned_room == undefined) {
@@ -45,44 +50,47 @@ var roleJanitor = {
                 creep.moveTo(creep.room.storage);
             }
         } else {
-            var dropped_resources = creep.room.find(FIND_DROPPED_RESOURCES, {
-                filter: (res) => {
-                    return res.amount > 50;
-                }
-            });
+            this.getCargo(creep);
+        }
+    },
 
+    getCargo: function(creep) {
+        var dropped_resources = creep.room.find(FIND_DROPPED_RESOURCES, {
+            filter: (res) => {
+                return res.amount > 50;
+            }
+        });
+        if (dropped_resources.length > 0) {
             if (dropped_resources.length > 0) {
-                if (dropped_resources.length > 0) {
-                    if(creep.pickup(dropped_resources[0]) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(dropped_resources[0])
-                    }
+                if(creep.pickup(dropped_resources[0]) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(dropped_resources[0])
                 }
-            } else {
-                var roomContainers = creep.room.find(FIND_STRUCTURES, {
-                    filter: (structure) => structure.structureType == STRUCTURE_CONTAINER
-                });
-                var fullestContainer = roomContainers[0];
-                for (var i in roomContainers) {
-                    var tar = roomContainers[i];
-                    var tar_dist = creep.pos.getRangeTo(tar);
-                    var full_dist = creep.pos.getRangeTo(fullestContainer);
-                    if (tar.store[RESOURCE_ENERGY]/tar_dist > fullestContainer.store[RESOURCE_ENERGY]/full_dist) {
-                        fullestContainer = tar;
-                    }
+            }
+        } else {
+            var roomContainers = creep.room.find(FIND_STRUCTURES, {
+                filter: (structure) => structure.structureType == STRUCTURE_CONTAINER
+            });
+            var fullestContainer = roomContainers[0];
+            for (var i in roomContainers) {
+                var tar = roomContainers[i];
+                var tar_dist = creep.pos.getRangeTo(tar);
+                var full_dist = creep.pos.getRangeTo(fullestContainer);
+                if (tar.store[RESOURCE_ENERGY]/tar_dist > fullestContainer.store[RESOURCE_ENERGY]/full_dist) {
+                    fullestContainer = tar;
                 }
-                if (creep.withdraw(fullestContainer, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(fullestContainer);
-                }
+            }
+            if (creep.withdraw(fullestContainer, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(fullestContainer);
             }
         }
     },
 
     repair: function(creep) {
         var wall_cut = 150000;
-        var rampart_cut = 180000;
-        var plain_cut = 1250;
-        var swamp_cut = 7500;
-        var container_cut = 100000;
+        var rampart_cut = 200000;
+        var plain_cut = 1000;
+        var swamp_cut = 5000;
+        var container_cut = 150000;
         var damagedStructures = creep.room.find(FIND_STRUCTURES, {
             filter: (structure) => structure.hits < structure.hitsMax
         });
@@ -97,9 +105,17 @@ var roleJanitor = {
             } else if (struct.structureType == STRUCTURE_RAMPART) {
                 if (struct.hits < rampart_cut) {
                     creep.memory.repair_to_val = true;
-                    creep.memory.repair_cap = 200000;
+                    creep.memory.repair_cap = 250000;
                     creep.memory.repair_target_id = struct.id;
                     heal_tar = struct;
+                    break;
+                }
+            } else if (struct.structureType == STRUCTURE_CONTAINER) {
+                if (struct.hits < container_cut) {
+                    heal_tar = struct;
+                    creep.memory.repair_to_perc = true;
+                    creep.memory.repair_cap = 1.0;
+                    creep.memory.repair_target_id = struct.id;
                     break;
                 }
             } else if (struct.structureType == STRUCTURE_ROAD && Game.map.getTerrainAt(struct.pos) == 'plain') {
@@ -118,14 +134,6 @@ var roleJanitor = {
                     creep.memory.repair_target_id = struct.id;
                     break;
                 }
-            } else if (struct.structureType == STRUCTURE_CONTAINER) {
-                if (struct.hits < container_cut) {
-                    heal_tar = struct;
-                    creep.memory.repair_to_perc = true;
-                    creep.memory.repair_cap = 1.0;
-                    creep.memory.repair_target_id = struct.id;
-                    break;
-                }
             } else {
                 heal_tar = struct;
                 break;
@@ -133,6 +141,14 @@ var roleJanitor = {
         }
 
         if (heal_tar == undefined) {
+            var curr_assigned_room = creep.memory.assigned_room;
+            var assigned_suburbs = creep.memory.assigned_suburbs;
+            if (assigned_suburbs == undefined) {
+                return;
+            }
+            var curr_index = assigned_suburbs.indexOf(curr_assigned_room);
+            creep.memory.assigned_room = assigned_suburbs[(curr_index+1) % assigned_suburbs.length];
+            console.log('No damaged structures...moving to next room:',creep.memory.assigned_room);
             return;
         } else {
             if (creep.repair(heal_tar) == ERR_NOT_IN_RANGE) {

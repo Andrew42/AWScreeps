@@ -1,6 +1,11 @@
 var roleStarter = {
     /** @param {Creep} creep **/
     run: function(creep) {
+        //if (creep.ticksToLive < 16 && creep.carry.energy == 0) {
+        //    console.log(creep.name,': SUDOKU');
+        //    creep.suicide();
+        //}
+
         if (!creep.memory.mining && creep.carry.energy == 0) {
             creep.memory.mining = true;
             this.getCargo(creep);
@@ -38,16 +43,7 @@ var roleStarter = {
                     return (structure.structureType == STRUCTURE_CONTAINER && structure.store[RESOURCE_ENERGY] < 1900)
                 }
         });
-        if (spawn.energy < spawn.energyCapacity) {
-            if (creep.transfer(spawn, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(spawn);
-            }
-        } else if (extensions.length > 0) {
-            var target = creep.pos.findClosestByPath(extensions);
-            if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(target);
-            }
-        } else if (containers.length > 0) {
+        if (containers.length > 0) {
             var target = creep.pos.findClosestByPath(containers);
             if (creep.transfer(target,RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(target);
@@ -60,6 +56,30 @@ var roleStarter = {
         } else if (creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
             creep.moveTo(creep.room.controller);
         }
+
+
+        //if (spawn.energy < spawn.energyCapacity) {
+        //    if (creep.transfer(spawn, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+        //        creep.moveTo(spawn);
+        //    }
+        //} else if (extensions.length > 0) {
+        //    var target = creep.pos.findClosestByPath(extensions);
+        //    if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+        //        creep.moveTo(target);
+        //    }
+        //} else if (containers.length > 0) {
+        //    var target = creep.pos.findClosestByPath(containers);
+        //    if (creep.transfer(target,RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+        //        creep.moveTo(target);
+        //    }
+        //} else if (construction_sites.length > 0) {
+        //    var target = creep.pos.findClosestByPath(construction_sites);
+        //    if (creep.build(target) == ERR_NOT_IN_RANGE) {
+        //        creep.moveTo(target);
+        //    }
+        //} else if (creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
+        //    creep.moveTo(creep.room.controller);
+        //}
     }
 };
 

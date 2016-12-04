@@ -2,6 +2,11 @@ var roleUpgrader = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
+        if (creep.ticksToLive < 15 && creep.carry.energy == 0) {
+            console.log(creep.name,': SUDOKU');
+            creep.suicide();
+        }
+
         if(creep.memory.upgrading && creep.carry.energy == 0) {
             creep.memory.upgrading = false;
             creep.say('harvesting');
@@ -12,8 +17,13 @@ var roleUpgrader = {
         }
 
         if(creep.memory.upgrading) {
-            if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
+            //if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
+            //    creep.moveTo(creep.room.controller);
+            //}
+            if (creep.pos.getRangeTo(creep.room.controller) > 2) {
                 creep.moveTo(creep.room.controller);
+            } else {
+                creep.upgradeController(creep.room.controller);
             }
         } else {
             if (creep.room.name != creep.memory.home) {
@@ -31,8 +41,8 @@ var roleUpgrader = {
 
                 var roomContainers = creep.room.find(FIND_STRUCTURES, {
                     filter: (structure) => {
-                        return (structure.structureType == STRUCTURE_CONTAINER && structure.store[RESOURCE_ENERGY] > creep.carryCapacity) ||
-                                (structure.structureType == STRUCTURE_STORAGE && structure.store[RESOURCE_ENERGY] > creep.carryCapacity)
+                        return (structure.structureType == STRUCTURE_CONTAINER && structure.store[RESOURCE_ENERGY] > 1000) ||
+                                (structure.structureType == STRUCTURE_STORAGE && structure.store[RESOURCE_ENERGY] > 10000)
                     }
                 });
                 var fullestContainer = roomContainers[0];

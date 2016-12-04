@@ -23,6 +23,10 @@ var assignReservers = {
         var obj_map = {};
         for (var i in avail_rooms) {
             var room = Game.rooms[avail_rooms[i]];
+            var room = Game.rooms[avail_rooms[i]];
+            if (room == undefined) {
+                continue;
+            }
             var obj_id = room.name;
             //var towers = avail_rooms[i].find(FIND_STRUCTURES, {
             //    filter: (structure) => {

@@ -2,6 +2,11 @@ var roleDefender = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
+        //if (creep.ticksToLive < 16 && creep.carry.energy == 0) {
+        //    console.log(creep.name,': SUDOKU');
+        //    creep.suicide();
+        //}
+
         var heal_targets = _.filter(Game.creeps, (tar_creep) => (tar_creep.room.name == creep.room.name && tar_creep.hits < tar_creep.hitsMax));
 
         if (creep.room.name != creep.memory.assigned_room) {
@@ -26,6 +31,7 @@ var roleDefender = {
     },
 
     moveToRoom: function(creep,room_name) {
+        //console.log('def. room name:',room_name);
         creep.moveTo(new RoomPosition(25, 25, room_name));
     },
 

@@ -11,8 +11,8 @@ var assignJanitors = {
 
         var suburbs = Memory.city_suburbs[city];
         var max_assigned = 1;
-        var avail_rooms = this.getAvailableObjects(active_creeps,suburbs,max_assigned);
-        this.assignObjects(inactive_creeps,avail_rooms);
+        //var avail_rooms = this.getAvailableObjects(active_creeps,suburbs,max_assigned);
+        this.assignObjects(active_creeps,inactive_creeps,city);
     },
 
     // NOTE: We should just return the obj_map dictionary instead, so that we can ensure we don't over-assign inactive creeps during assignment
@@ -22,6 +22,9 @@ var assignJanitors = {
         var obj_map = {};
         for (var i in avail_rooms) {
             var room = Game.rooms[avail_rooms[i]];
+            if (room == undefined) {
+                continue;
+            }
             var obj_id = avail_rooms[i];
             var towers = room.find(FIND_STRUCTURES, {
                 filter: (structure) => {
@@ -68,17 +71,30 @@ var assignJanitors = {
         return avail_objs
     },
 
-    assignObjects(inactive_creeps,avail_objs) {
-        for (var i in avail_objs) {
-            var obj_id = avail_objs[i];
-            console.log('Available rooms: ',obj_id);
-            if (inactive_creeps.length > 0) {
-                var creep = inactive_creeps[0];
-                creep.memory.assigned_room = obj_id;
-                inactive_creeps.splice(0,1);
-                console.log('Assigned ',creep.name,' to ',obj_id);
-            }
+    assignObjects(active_creeps,inactive_creeps,city) {
+        var suburbs = Memory.city_suburbs[city];
+        if (active_creeps == undefined) {
+            var num_active = 0;
+        } else {
+            var num_active = active_creeps.length;
         }
+        for (var i in inactive_creeps) {
+            var creep = inactive_creeps[0];
+            creep.memory.assigned_suburbs = suburbs;
+            creep.memory.assigned_room = suburbs[(num_active+1) % suburbs.length];
+        }
+
+
+        //for (var i in avail_objs) {
+        //    var obj_id = avail_objs[i];
+        //    console.log('Available rooms: ',obj_id);
+        //    if (inactive_creeps.length > 0) {
+        //        var creep = inactive_creeps[0];
+        //        creep.memory.assigned_room = obj_id;
+        //        inactive_creeps.splice(0,1);
+        //        console.log('Assigned ',creep.name,' to ',obj_id);
+        //    }
+        //}
     }
 };
 

@@ -2,6 +2,10 @@ var roleTemplate = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
+        if (creep.ticksToLive < 10 && creep.carry.energy == 0) {
+            console.log(creep.name,': SUDOKU');
+            creep.suicide();
+        }
         //console.log('Name: ',creep.name,' Assigned Container: ',creep.memory.assigned_container);
 
         if (creep.carry.energy == 0) {

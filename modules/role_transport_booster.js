@@ -1,27 +1,12 @@
-var roleUpgradeBooster = {
+var roleTransportBooster = {
     /** @param {Creep} creep **/
     run: function(creep,target_room) {
-        /* DONE */
-
+        /* NOT DONE */
         if (Game.rooms[target_room] == undefined) {
             console.log('Unknown room, make sure to scout it first!');
             return;
         }
 
-        if(creep.memory.upgrading && creep.carry.energy == 0) {
-            creep.memory.upgrading = false;
-            creep.say('collecting');
-        }
-        if(!creep.memory.upgrading && creep.carry.energy == creep.carryCapacity) {
-            creep.memory.upgrading = true;
-            creep.say('upgrading');
-        }
-
-        if (creep.memory.upgrading) {
-            this.storeCargo(creep,target_room);
-        } else {
-            this.getCargo(creep);
-        }
     },
 
     getCargo: function(creep) {
@@ -47,4 +32,4 @@ var roleUpgradeBooster = {
     }
 };
 
-module.exports = roleUpgradeBooster;
+module.exports = roleTransportBooster;

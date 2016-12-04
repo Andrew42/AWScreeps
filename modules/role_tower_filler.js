@@ -2,6 +2,13 @@ var roleTowerFiller = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
+        if (creep.ticksToLive < 16 && creep.carry.energy == 0) {
+            console.log(creep.name,': SUDOKU');
+            creep.suicide();
+        } else if (creep.ticksToLive < CREEP_SPAWN_TIME*creep.body.length+25 && !creep.memory.is_zombie) {
+            creep.memory.is_zombie = true;
+        }
+        
         if (!creep.memory.filling_tower && creep.carry.energy == creep.carryCapacity) {
             creep.memory.filling_tower = true;
             creep.say('Filling');
@@ -19,7 +26,11 @@ var roleTowerFiller = {
             this.getCargo(creep);
         } else {
             if (!this.storeCargo(creep)) {
-                var towers = creep.room.find(FIND_STRUCTURES, {filter: (structure) => {return structure.structureType == STRUCTURE_TOWER}})
+                var towers = creep.room.find(FIND_STRUCTURES, {
+                    filter: (structure) => {
+                        return structure.structureType == STRUCTURE_TOWER
+                    }
+                });
                 creep.moveTo(creep.pos.findClosestByPath(towers));
             }
         }
@@ -51,7 +62,7 @@ var roleTowerFiller = {
     storeCargo: function(creep) {
         var targets = creep.room.find(FIND_STRUCTURES, {
                 filter: (structure) => {
-                    return (structure.structureType == STRUCTURE_TOWER && structure.energy < structure.energyCapacity*0.70);
+                    return (structure.structureType == STRUCTURE_TOWER && structure.energy < structure.energyCapacity*0.90);
                 }
         });
         if (targets.length > 0) {

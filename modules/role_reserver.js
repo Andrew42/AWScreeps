@@ -2,6 +2,14 @@ var roleReserver = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
+        if (creep.memory.assigned_room == undefined) {
+            return;
+        }
+        //if (creep.ticksToLive < 1 && creep.carry.energy == 0) {
+        //    console.log(creep.name,': SUDOKU');
+        //    creep.suicide();
+        //}
+
         if (creep.room.name != creep.memory.assigned_room) {
             this.moveToRoom(creep,creep.memory.assigned_room);
         } else {

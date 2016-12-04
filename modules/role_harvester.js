@@ -2,7 +2,26 @@ var roleHarvester = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-        //if(creep.carry.energy < creep.carryCapacity) {
+        //if (creep.ticksToLive < 100 && creep.body.length < 20) {
+        //    creep.memory.being_renewed = true;
+        //} else if (creep.tickToLive > 1300) {
+        //    creep.memory.being_renewed = false;
+        //}
+        //if (creep.memory.being_renewed) {
+        //    var spawn = creep.room.pos.findClosestByRange(FIND_MY_SPAWNS);
+        //} else if (creep.carry.energy == 0) {
+        //    this.getCargo(creep);
+        //} else {
+        //    this.storeCargo(creep);
+        //}
+
+        if (creep.ticksToLive < 10 && creep.carry.energy == 0) {
+            console.log(creep.name,': SUDOKU');
+            creep.suicide();
+        } else if (creep.ticksToLive < CREEP_SPAWN_TIME*creep.body.length+10 && !creep.memory.is_zombie) {
+            creep.memory.is_zombie = true;
+        }
+        
         if (creep.carry.energy == 0) {
             this.getCargo(creep);
         } else {
@@ -18,20 +37,26 @@ var roleHarvester = {
             }
         });
 
+        if (creep.room.storage != undefined) {
+            var storage_val = creep.room.storage.store[RESOURCE_ENERGY];
+        } else {
+            var storage_val = 0
+        }
+
         if (dropped_resources.length > 0) {
             if (dropped_resources.length > 0) {
                 if(creep.pickup(dropped_resources[0]) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(dropped_resources[0])
                 }
             }
-        } else if (creep.room.storage != undefined) {
+        } else if (storage_val > 0) {
             if (creep.withdraw(creep.room.storage,RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(creep.room.storage);
             }
         } else {
             var roomContainers = creep.room.find(FIND_STRUCTURES, {
                 filter: (structure) => {
-                    return (structure.structureType == STRUCTURE_CONTAINER && structure.store[RESOURCE_ENERGY] > creep.carryCapacity)
+                    return (structure.structureType == STRUCTURE_CONTAINER && structure.store[RESOURCE_ENERGY] > 0)
                 }
             });
             var fullestContainer = roomContainers[0];

@@ -10,7 +10,7 @@ var assignTowerFillers = {
         }
 
         var avail_rooms = Memory.city_suburbs[city];
-        var max_assigned = 1;
+        var max_assigned = 2;
         var avail_objs = this.getAvailableObjects(active_creeps,avail_rooms,max_assigned);
         this.assignObjects(inactive_creeps,avail_objs);
     },
@@ -22,6 +22,9 @@ var assignTowerFillers = {
         var obj_map = {};
         for (var i in avail_rooms) {
             var room = Game.rooms[avail_rooms[i]];
+            if (room == undefined) {
+                continue;
+            }
             var obj_id = room.name;
             var towers = room.find(FIND_STRUCTURES, {
                 filter: (structure) => {

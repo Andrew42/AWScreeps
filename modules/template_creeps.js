@@ -184,12 +184,18 @@ var creep_templates = {
         ],
         'builder':[//1050
             WORK,WORK,WORK,
-            CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,
-            MOVE,MOVE,MOVE,MOVE,MOVE,MOVE
+            CARRY,CARRY,CARRY,CARRY,CARRY,
+            CARRY,CARRY,CARRY,CARRY,
+            MOVE,MOVE,MOVE,MOVE,MOVE,
+            MOVE
         ],
-        'transporter':[//1200
-            CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,
-            MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE
+        'transporter':[//1500
+            CARRY,CARRY,CARRY,CARRY,CARRY,
+            CARRY,CARRY,CARRY,CARRY,CARRY,
+            CARRY,CARRY,CARRY,CARRY,CARRY,
+            CARRY,CARRY,CARRY,CARRY,CARRY,
+            MOVE,MOVE,MOVE,MOVE,MOVE,
+            MOVE,MOVE,MOVE,MOVE,MOVE
         ],
         'starter':[//300
             WORK,
@@ -197,14 +203,19 @@ var creep_templates = {
             MOVE,MOVE
         ],
         'upgrader':[//1300
-            WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,
+            WORK,WORK,WORK,WORK,WORK,
+            WORK,WORK,WORK,
             CARRY,CARRY,CARRY,CARRY,
-            MOVE,MOVE,MOVE,MOVE,MOVE,MOVE
+            MOVE,MOVE,MOVE,MOVE,MOVE,
+            MOVE
         ],
         'upgrade_booster':[//1200
             WORK,WORK,WORK,
-            CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,
-            MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE
+            CARRY,CARRY,CARRY,CARRY,CARRY,
+            CARRY,CARRY,CARRY,CARRY,CARRY,
+            CARRY,
+            MOVE,MOVE,MOVE,MOVE,MOVE,
+            MOVE,MOVE
         ]
     },
     rcl_6: {//MAX: 2300

@@ -9,6 +9,11 @@ var roleClaimer = {
 
     /** @param {Creep} creep **/
     run: function(creep,target_room) {
+        //if (creep.ticksToLive < 1 && creep.carry.energy == 0) {
+        //    console.log(creep.name,': SUDOKU');
+        //    creep.suicide();
+        //}
+
         var room = Game.rooms[target_room];
         if (room == undefined) {
             console.log('Room',target_room,'is undefined, scout it first!');

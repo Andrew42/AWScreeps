@@ -4,6 +4,14 @@ var roleTransporter = {
     run: function(creep) {
         //console.log('Name: ',creep.name,' Assigned Container: ',creep.memory.assigned_container);
 
+        if (creep.ticksToLive < 50 && creep.carry.energy == 0) {
+            console.log(creep.name,': SUDOKU');
+            creep.suicide();
+        } else if (creep.ticksToLive < CREEP_SPAWN_TIME*creep.body.length+25 && !creep.memory.is_zombie) {
+            creep.memory.is_zombie = true;
+            //Memory.cities[creep.memory.home].worker_count[creep.memory.role] += 1;
+        }
+
         //if (!creep.memory.on_path) {
         //    this.moveToHead(creep);
         //    return;
@@ -34,7 +42,6 @@ var roleTransporter = {
     sim_getCargo:function(creep) {
         var assigned_container = Game.getObjectById(creep.memory.assigned_container);
         if (creep.withdraw(assigned_container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-            //console.log('iterating forward...');
             this.iterateForward(creep);
         }
     },
@@ -42,7 +49,6 @@ var roleTransporter = {
     sim_storeCargo: function(creep) {
         var assigned_storage = Game.getObjectById(creep.memory.assigned_storage);
         if (creep.transfer(assigned_storage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-            //console.log('iterating backward...');
             this.iterateBackward(creep);
         }
     },

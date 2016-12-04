@@ -2,12 +2,38 @@ var roleMiner = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
+        var container = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+            filter: function(structure) {
+                return structure.structureType == STRUCTURE_CONTAINER;
+            }
+        });
+        if (creep.ticksToLive < 13 && creep.carry.energy == 0) {
+            console.log(creep.name,': SUDOKU');
+            creep.suicide();
+            //Memory.cities[creep.memory.home].worker_count[creep.memory.role] -= 1;
+            return;
+        } else if (creep.ticksToLive < CREEP_SPAWN_TIME*creep.body.length+25 && !creep.memory.is_zombie) {
+            creep.memory.is_zombie = true;
+            //Memory.cities[creep.memory.home].worker_count[creep.memory.role] += 1;
+        }
+
+        if (container != undefined) {
+            //console.log(creep.name,':',container.structureType);
+            //console.log('\tisNear:',creep.pos.isNearTo(container));
+            if (creep.pos.isNearTo(container) && (Game.getObjectById(creep.memory.assigned_source).energy == 0 || _.sum(container.store) == 2000)) {
+                if (container.hits < container.hitsMax && creep.carry.energy > 0) {
+                    creep.repair(container);
+                    return;
+                }
+            }
+        }
+
         if (!creep.memory.mining && creep.carry.energy == 0) {
             creep.memory.mining = true;
             creep.say('mining');
         }
         //if (creep.memory.mining && creep.carry.energy == creep.carryCapacity) {
-        if (creep.memory.mining && creep.carry.energy > 95) {
+        if (creep.memory.mining && creep.carry.energy > creep.carryCapacity*0.9) {
             creep.memory.mining = false;
             creep.say('storing');
         }

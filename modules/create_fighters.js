@@ -1,6 +1,8 @@
-        var fighter_template = [
-            ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,
-            MOVE,MOVE,MOVE,MOVE
+        var fighter_template = [//1040
+            ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,
+            ATTACK,ATTACK,ATTACK,
+            MOVE,MOVE,MOVE,MOVE,MOVE,
+            MOVE,MOVE,MOVE
         ];
         var scout_template = [
             MOVE
@@ -14,15 +16,22 @@
             MOVE
         ];
         var defender_template = [
-            ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,
-            MOVE,MOVE,MOVE,MOVE,
+            TOUGH,TOUGH,TOUGH,TOUGH,
+            ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,
+            MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,
+            HEAL
+        ];
+        var healer_template = [//1800
+            MOVE,MOVE,MOVE,MOVE,MOVE,
+            MOVE,
+            HEAL,HEAL,HEAL,HEAL,HEAL,
             HEAL
         ];
 
 var createFighters = {
     /** @param {Creep} creep **/
     run: function(spawn) {
-        if (spawn.room.controller.level < 4) {
+        if (spawn.room.controller.level < 5) {
             return;
         }
 
@@ -121,16 +130,6 @@ var createFighters = {
             spawn_id: spawn.id
         });
         console.log('Spawning new scout: ',newName);
-    },
-
-    createReserver: function(spawn,current_amount) {
-        var newName = spawn.createCreep(reserver_template, undefined, {
-            role: 'reserver',
-            home: spawn.room.name,
-            spawn_id: spawn.id,
-            assigned_room: undefined
-        });
-        console.log('Spawning new reserver: ',newName) 
     },
 
     createClaimer: function(spawn,current_amount) {
